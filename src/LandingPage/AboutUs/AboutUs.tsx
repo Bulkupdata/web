@@ -49,7 +49,8 @@ const AboutUs: React.FC<AboutUsProps> = () => {
                 borderRadius: 48,
                 border: "none",
                 marginTop: 16,
-                backgroundColor:'red'
+                backgroundColor: "red",
+                color: "white",
               }}
               onClick={handleCtaClick}
             >
@@ -84,14 +85,14 @@ const AboutUs: React.FC<AboutUsProps> = () => {
                 borderRadius: 48,
                 border: "none",
                 marginTop: 24,
-                backgroundColor:'red'
+                backgroundColor: "red",
+                color: "white",
               }}
               onClick={handleCtaClick}
             >
               Buy Data Now
             </button>
           </div>
-
         </div>
         <div className="about-image">
           <img src={missionImage} alt="Our Mission" />
@@ -126,14 +127,14 @@ const AboutUs: React.FC<AboutUsProps> = () => {
                 borderRadius: 48,
                 border: "none",
                 marginTop: 16,
-                backgroundColor:'red'
+                backgroundColor: "red",
+                color: "white",
               }}
               onClick={handleCtaClick}
             >
               Buy Data Now
             </button>
           </div>
-
         </div>
       </div>
 
@@ -162,14 +163,14 @@ const AboutUs: React.FC<AboutUsProps> = () => {
                 borderRadius: 48,
                 border: "none",
                 marginTop: 16,
-                backgroundColor:'#023009'
+                backgroundColor: "#023009",
+                color: "white",
               }}
               onClick={handleCtaClick}
             >
               Buy Data Now
             </button>
           </div>
-
         </div>
         <div className="about-image">
           <img src={missionImage} alt="Our Mission" />
