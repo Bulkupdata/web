@@ -1,0 +1,70 @@
+.hero {
+    background-image: url('https://res.cloudinary.com/dms5qvyzp/image/upload/v1745816278/uploads/i1zjejlb4jclhw3bh1uv.jpg');
+    background-size: cover;
+    /* changed from contain */
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 80vh;
+    width: 100vw;
+    /* use vw to ensure it spans full screen width */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    gap: 32px;
+
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #00000099;
+    /* good overlay */
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    /* max-width: 800px; */
+    padding: 20px;
+    max-width: 700px
+}
+
+.hero h1 {
+    font-size: 2.9rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+
+.hero p {
+    font-size: 1rem;
+    text-align: center;
+    padding-left: 24px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.6rem;
+        text-align: left;
+        padding-left: 24px;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        text-align: left;
+        padding-left: 24px;
+    }
+}
