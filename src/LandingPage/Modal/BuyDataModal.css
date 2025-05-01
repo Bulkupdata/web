@@ -8,9 +8,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* Raised to ensure it's above everything */
+    z-index: 9999;
+    /* Raised to ensure it's above everything */
     padding: 1rem;
 }
+
 .modal {
     background: #ffffff;
     padding: 2rem;
@@ -95,13 +97,14 @@
 }
 
 .category-btn {
-    padding: 6px 12px;
+    padding: 12px 12px;
     border: 1px solid #ddd;
     background-color: #f5f5f5;
     cursor: pointer;
     border-radius: 4px;
     color: #333;
     transition: all 0.2s;
+    font-size: 16px;
 }
 
 .category-btn:hover {
@@ -125,7 +128,7 @@
 .bundle-card {
     padding: 10px;
     border: 1px solid #ddd;
-    width: 100px;
+    width: 90px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -136,6 +139,7 @@
     background-color: #fff;
     color: #222;
     transition: border-color 0.3s, background-color 0.3s;
+    font-size: 13px
 }
 
 .bundle-card:hover {
