@@ -2,12 +2,15 @@
     padding: 30px 20px;
     max-width: 1200px;
     margin: 0 auto;
+    flex-wrap: wrap;
+    width: 100vw
 }
 
 .about-title {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 40px;
+
 }
 
 .about-section {
@@ -16,7 +19,6 @@
     justify-content: space-between;
     margin-top: 64px;
     gap: 40px;
-    flex-wrap: wrap;
 
 }
 
@@ -32,6 +34,7 @@
     padding: 64px 44px;
     border-radius: 32px;
     color: #FFD000;
+
 }
 
 .about-image {
@@ -69,16 +72,31 @@
     .about-section {
         flex-direction: column;
         padding: 32px 1px;
+        border-radius: 12px;
     }
+
     .about-section-reverse {
         flex-direction: column;
-        padding: 32px 24px;
+        padding: 32px 12px;
+        border-radius: 12px;
     }
+
     .about-text h3 {
-        font-size: 1.5rem;
+        font-size: 1.3rem;
     }
 
     .about-text p {
-        font-size: 1rem;
+        font-size: 0.87rem;
+        width: 100%;
+        flex-wrap: wrap;
     }
+
+    .about-image img {
+        width: 87%;
+        height: 100%;
+        border-radius: 10px;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
 }

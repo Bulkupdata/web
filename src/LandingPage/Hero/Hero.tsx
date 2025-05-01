@@ -23,9 +23,7 @@ const Hero: React.FC = () => {
         <div className="hero-content">
           <h1>
             Get More Data, Pay Less with
-            <span
-              style={{ color: "#FFD000", paddingLeft: 8, paddingRight: 16 }}
-            >
+            <span style={{ color: "#FFD000", paddingLeft: 8, paddingRight: 0 }}>
               BulkUpData
             </span>
           </h1>
@@ -48,9 +46,6 @@ const Hero: React.FC = () => {
                 fontWeight: "bold",
                 fontSize: "1rem",
                 border: "none",
-                width: "90%",
-                margin: 16,
-                maxWidth: 350
               }}
               onClick={() => setShowModal(true)}
             >
