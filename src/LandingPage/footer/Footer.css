@@ -1,15 +1,18 @@
 .bulkupdata-footer {
-  background-color: #023009;
-  color: #FFD000;
+  background-color: #000;
+  color: #fff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   padding: 60px 20px 30px;
   text-align: center;
 }
+
 .social-link {
-  margin-right: 24px;
+  margin-right: 12px;
   display: inline-block;
-  margin-top: 24px
+  margin-top: 24px;
+  margin-left: 12px;
 }
+
 .bulkupdata-footer-inner {
   display: flex;
   flex-direction: column;
@@ -35,7 +38,7 @@
   gap: 12px;
   justify-content: center;
   align-items: center;
-  background-color: #FFD00012;
+  background-color: #fff12;
   padding: 12px 20px;
   border-radius: 48px;
   width: fit-content;
@@ -46,7 +49,7 @@
 }
 
 .bulkupdata-footer-contact a {
-  color: #FFD000;
+  color: #fff;
   text-decoration: none;
   font-size: 15px;
   transition: 0.3s ease;
@@ -72,7 +75,7 @@
 }
 
 .bulkupdata-footer-links li a {
-  color: #FFD000;
+  color: #fff;
   text-decoration: none;
   font-size: 16px;
   transition: all 0.3s ease;
@@ -88,7 +91,7 @@
   margin-top: 50px;
   text-align: center;
   font-size: 14px;
-  color: #FFD000;
+  color: #fff;
   border-top: 1px solid #2a2a2a;
   padding-top: 20px;
 }
