@@ -2,7 +2,7 @@ import { FaTelegram, FaInstagram, FaXTwitter } from "react-icons/fa6";
 import { SiTiktok } from "react-icons/si";
 import "./Footer.css";
 
-const iconStyle = { fontSize: 24, color: "#FFD000" };
+const iconStyle = { fontSize: 24, color: "#fff" };
 
 const Footer = () => {
   return (
