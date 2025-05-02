@@ -13,7 +13,7 @@ const Footer = () => {
           <h3 className="bulkupdata-footer-title">Contact Us</h3>
           <div className="bulkupdata-footer-contact">
             <p>
-              <a href="mailto:info@bulkupdata.com">info@bulkupdata.com</a>
+              <a href="mailto:info@bulkupdata.com">bulkupdata@gmail.com</a>
             </p>
           </div>
         </div>
