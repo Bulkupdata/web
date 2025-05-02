@@ -35,10 +35,11 @@ const Navbar: React.FC = () => {
         <div className={`nav-links ${isOpen ? "active" : ""}`}>
           <NavLink to="/" className="nav-link" onClick={closeNavbar}>
             Home
+          </NavLink>{" "}
+          <NavLink to="/faq" className="nav-link" onClick={closeNavbar}>
+            FAQS
           </NavLink>
-          {/* <NavLink to="/" className="nav-link" onClick={closeNavbar}>
-            About
-          </NavLink> */}
+          {/* */}
           <button
             className="donate-btn"
             style={{ border: "none" }}

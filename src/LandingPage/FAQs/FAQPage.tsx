@@ -44,12 +44,12 @@ const FAQPage: React.FC = () => {
   return (
     <div style={{ backgroundColor: "#fff" }}>
       <div className="faq-container">
+        <br /> <br /> <br />
         <h1 className="faq-header">Frequently Asked Questions</h1>
         <p className="faq-subtext">
           Got questions about BulkUpData? We’ve answered the most common ones
           here.
         </p>
-
         {faqItems.map((faq, index) => (
           <div
             key={index}

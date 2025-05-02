@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Hero.css";
-import libraryImg from "../../assets/images/home.jpg";
+//import libraryImg from "../../assets/images/donny.jpg";
 import BuyDataModal from "../Modal/BuyDataModal";
 
 const Hero: React.FC = () => {
@@ -11,20 +11,28 @@ const Hero: React.FC = () => {
       <div
         className="hero"
         style={{
-          backgroundImage: `url(${libraryImg})`,
+          //backgroundImage: `url(${libraryImg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100vh",
           display: "flex",
           width: "100vw",
           flexDirection: "column",
+          backgroundColor: "#3F3C3C",
         }}
       >
-        <div className="hero-content">
+        <div
+          className="hero-content"
+          style={{
+            backgroundColor: "#",
+          }}
+        >
           <h1>
             Get More Data, Pay Less with
-            <span style={{ color: "#FFD000", paddingLeft: 8, paddingRight: 0 }}>
-              BulkUpData
+            <span style={{ paddingLeft: 8, paddingRight: 0 }}>
+              <span style={{ color: "red" }}>Bulk</span>
+              <span style={{ color: "yellow" }}>Up</span>
+              <span style={{ color: "green" }}>Data</span>
             </span>
           </h1>
           <p>

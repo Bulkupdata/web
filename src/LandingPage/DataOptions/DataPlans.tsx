@@ -5,7 +5,7 @@ import "./DataPlans.css";
 import mtnImg from "../../assets/images/mtn.png";
 import airtelImg from "../../assets/images/airtel.jpeg";
 import gloImg from "../../assets/images/glo.png";
-import EtisalatImg from "../../assets/images/etisalat.jpeg";
+import EtisalatImg from "../../assets/images/9mobile.png";
 
 const livePoolData = [
   {
@@ -33,7 +33,7 @@ const livePoolData = [
     image: gloImg,
   },
   {
-    network: "Etisalat",
+    network: "9 Mobile",
     poolSize: "200GB",
     slotSize: "20GB",
     price: "₦2,900",
@@ -66,7 +66,7 @@ const soloData = [
   },
 
   {
-    network: "Etisalat",
+    network: "9 Mobile",
     size: "10GB",
     price: "₦2,800",
     validity: "30 Days",
@@ -111,12 +111,9 @@ const DataPlans: React.FC = () => {
                 <strong>Slot Size:</strong> {plan.slotSize}
               </p>
               <p>
-                <strong>Price/Slot:</strong> {plan.price}
+                <strong>Price:</strong> {plan.price}
               </p>
-              <p>
-                <strong>Slots Left:</strong> {plan.slotsLeft}
-              </p>
-              <button className="action-btn">Get Slot</button>
+              <button className="action-btn">Claim My Data</button>
             </div>
           ))}
         </div>

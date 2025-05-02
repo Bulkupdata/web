@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import "./AboutUs.css";
-import whoImage from "../../assets/images/a.jpg";
-import missionImage from "../../assets/images/b.jpg";
-import visionImage from "../../assets/images/c.jpg";
+import whoImage from "../../assets/images/sectiona.jpg";
+import missionImage from "../../assets/images/section.jpg";
+import visionImage from "../../assets/images/sectionb.png";
 import BuyDataModal from "../Modal/BuyDataModal";
 
 interface AboutUsProps {
@@ -29,32 +29,28 @@ const AboutUs: React.FC<AboutUsProps> = () => {
         </div>
         <div className="about-text">
           <h3 style={{ color: "#023009" }}>
-            Join a Preloaded Pool. Get Your Data Instantly.
+            Instant Data, Zero Hassle. Join a Preloaded Pool Today.
           </h3>
           <p>
-            We’ve already funded the group data plan. Once you pay for your
-            slot, we allocate your share immediately tagline: No waiting, No
-            delays.{" "}
+            We’ve already paid for the group data plan, so you don’t have to
+            wait. Just grab your slot, and your data is delivered instantly.
           </p>
-          <p>
-            No complicated processes, no unnecessary charges—just smarter data
-            access designed to save you money and keep you connected longer.
-          </p>
-
+          <br />
           <div className="cta-container">
             <button
               className="cta-button"
               style={{
-                padding: 16,
+                padding: `24px 26px`,
                 borderRadius: 48,
                 border: "none",
                 marginTop: 16,
                 backgroundColor: "red",
                 color: "white",
+                fontSize: 17,
               }}
               onClick={handleCtaClick}
             >
-              Buy Data Now
+              Join the Pool Now
             </button>
           </div>
         </div>
@@ -65,28 +61,29 @@ const AboutUs: React.FC<AboutUsProps> = () => {
       {/* Our Mission */}
       <div className="about-section-reverse">
         <div className="about-text">
-          <h3 style={{ color: "#FFD000" }}>Affordable. Instant. Flexible.</h3>
-          <p style={{ color: "#FFD000" }}>
+          <h3 style={{ color: "#fff" }}>Affordable. Instant. Flexible.</h3>
+          <p style={{ color: "#fff" }}>
             • <strong>Affordable Plans:</strong> Access mobile data at a
             fraction of standard network prices.
-            <br />• <strong>No Waiting:</strong> Buy data and get it delivered
-            instantly—no delays, no hassles.
-            <br />• <strong>Flexible Options:</strong> Whether you prefer solo
-            purchases or group pools, we’ve got you covered.
-            <br />• <strong>Transparent System:</strong> What you see is what
-            you get—no hidden fees, just value and clarity.
+            <br /> <br />• <strong>No Waiting:</strong> Buy data and get it
+            delivered instantly—no delays, no hassles.
+            <br /> <br />• <strong>Flexible Options:</strong> Whether you prefer
+            solo purchases or group pools, we’ve got you covered.
+            <br /> <br />• <strong>Transparent System:</strong> What you see is
+            what you get—no hidden fees, just value and clarity.
           </p>
 
           <div className="cta-container">
             <button
               className="cta-button"
               style={{
-                padding: 16,
+                padding: `24px 26px`,
                 borderRadius: 48,
                 border: "none",
                 marginTop: 24,
-                backgroundColor: "red",
+                backgroundColor: "#000",
                 color: "white",
+                fontSize: 17,
               }}
               onClick={handleCtaClick}
             >
@@ -135,45 +132,6 @@ const AboutUs: React.FC<AboutUsProps> = () => {
               Buy Data Now
             </button>
           </div>
-        </div>
-      </div>
-
-      <div
-        className="about-section-reverse"
-        style={{ backgroundColor: "#ff0000" }}
-      >
-        <div className="about-text">
-          <h3 style={{ color: "#FFD000" }}>Affordable. Instant. Flexible.</h3>
-          <p style={{ color: "#FFD000" }}>
-            • <strong>Affordable Plans:</strong> Access mobile data at a
-            fraction of standard network prices.
-            <br />• <strong>No Waiting:</strong> Buy data and get it delivered
-            instantly—no delays, no hassles.
-            <br />• <strong>Flexible Options:</strong> Whether you prefer solo
-            purchases or group pools, we’ve got you covered.
-            <br />• <strong>Transparent System:</strong> What you see is what
-            you get—no hidden fees, just value and clarity.
-          </p>
-
-          <div className="cta-container">
-            <button
-              className="cta-button"
-              style={{
-                padding: 16,
-                borderRadius: 48,
-                border: "none",
-                marginTop: 16,
-                backgroundColor: "#023009",
-                color: "white",
-              }}
-              onClick={handleCtaClick}
-            >
-              Buy Data Now
-            </button>
-          </div>
-        </div>
-        <div className="about-image">
-          <img src={missionImage} alt="Our Mission" />
         </div>
       </div>
 
