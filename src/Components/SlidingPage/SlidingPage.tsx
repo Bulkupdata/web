@@ -3,7 +3,7 @@ import "./SlidingPage.css";
 import { useTheme } from "../../contexts/ThemeContext";
 
 const slidingText =
-  "Bulkup Data, Quick Recharge, Fast Recharge, Reliable Recharge, Data & Bundles, Airtimes ";
+  "Bulkup Data, Quick Recharge, Fast Recharge, Reliable Recharge, Data & Bundles, Airtime, ";
 
 const SlidingPage: React.FC = () => {
   const { theme } = useTheme();
