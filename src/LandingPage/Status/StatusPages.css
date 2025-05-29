@@ -45,7 +45,7 @@
 /* Specific styles by status */
 
 .success {
-    border-left: 6px solid #4caf50;
+    /* border-left: 6px solid #4caf50; */
     background: linear-gradient(135deg, #e6f4ea, #d3e9d3);
     color: #2f5d32;
 }
