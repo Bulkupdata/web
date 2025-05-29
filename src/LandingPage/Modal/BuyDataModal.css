@@ -6,16 +6,56 @@
     bottom: 0;
     background: #00000075;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 9999999;
     /* Raised to ensure it's above everything */
-    padding: 1rem;
+    padding: 16px;
 }
+
+.phone-input-wrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    /* padding: 16px; */
+    font-size: 14px;
+    border: 1px solid #66666612;
+    border-radius: 14px;
+    background-color: #f5f5f5;
+}
+
+.country-code {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px 0 0 4px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    user-select: none;
+
+}
+
+.phone-input {
+    flex: 1;
+    padding: 6px 8px;
+    font-size: 14px;
+    border: none;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    outline: none;
+}
+
+/* .phone-input:focus {
+    border-color: #007bff;
+  } */
 
 .modal {
     background: #ffffff;
-    padding: 2rem;
+    padding: 20px;
     border-radius: 12px;
     max-width: 500px;
     width: 100%;
@@ -33,12 +73,55 @@
     color: #222;
 }
 
+.modal input {
+    width: 100%;
+    padding: 16px;
+    font-size: 14px;
+    border-radius: 14px;
+    background-color: #f5f5f5;
+    transition: border 0.3s ease;
+    color: #666;
+}
+
+.loader {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #333;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    animation: spin 0.8s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.new-div-networks {
+    width: 100%;
+    padding: 16px;
+    font-size: 14px;
+    border-radius: 14px;
+    background-color: #f5f5f5;
+    transition: border 0.3s ease;
+    color: #666;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
 .modal label {
     display: block;
     margin-top: 1.5rem;
     margin-bottom: 0.3rem;
     font-weight: 600;
-    color: #333;
+    color: #66666699;
     font-size: 0.95rem;
     text-align: left;
 }
@@ -46,12 +129,12 @@
 .modal select {
     width: 100%;
     padding: 0.6rem;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: #f9f9f9;
+    font-size: 14px;
+    border: 1px solid #66666612;
+    border-radius: 14px;
+    background-color: #f5f5f5;
     transition: border 0.3s ease;
-    color: #222;
+    color: #666;
 }
 
 .modal select:focus {
@@ -61,15 +144,15 @@
 
 .buy-button {
     background-color: #ff0000;
-    padding: 0.75rem 1.5rem;
+    padding: 13px 1.5rem;
     margin-top: 1.5rem;
     border: none;
     border-radius: 48px;
-    font-weight: bold;
+    font-weight: 400;
     cursor: pointer;
     width: 100%;
     color: #fff;
-    font-size: 1rem;
+    font-size: 14px;
     transition: background-color 0.3s ease;
 }
 
@@ -78,15 +161,16 @@
 }
 
 .close-button {
-    margin-top: 1rem;
+    margin-top: 4px;
     background: none;
     color: #666;
     border: none;
     cursor: pointer;
-    font-size: 0.9rem;
-    text-align: center;
+    font-size: 13px;
+    text-align: right;
     display: block;
     width: 100%;
+    margin-bottom: 32px
 }
 
 .category-toggle {
@@ -97,14 +181,14 @@
 }
 
 .category-btn {
-    padding: 12px 12px;
-    border: 1px solid #ddd;
+    padding: 13px 14px;
+    border: none;
     background-color: #f5f5f5;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 32px;
     color: #333;
     transition: all 0.2s;
-    font-size: 16px;
+    font-size: 13px;
 }
 
 .category-btn:hover {
@@ -134,9 +218,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    background-color: #fff;
+    background-color: #f5f5f5;
     color: #222;
     transition: border-color 0.3s, background-color 0.3s;
     font-size: 13px
@@ -148,5 +232,5 @@
 
 .bundle-card.selected {
     border-color: #ff0000;
-    background-color: #ffe5e5;
+    background-color: #f5f5f5;
 }

@@ -13,13 +13,26 @@ const Footer = () => {
           <h3 className="bulkupdata-footer-title">Contact Us</h3>
           <div className="bulkupdata-footer-contact">
             <p>
-              <a href="mailto:info@bulkupdata.com">bulkupdata@gmail.com</a>
+              <a href="mailto:admin@bulkupdata.com">Admin@bulkupdata.com</a>
             </p>
           </div>
         </div>
 
-        {/* Socials Section */}
-        <div className="bulkupdata-footer-section">
+
+
+        <div className="bulkupdata-footer-links-wrapper">
+          <ul className="bulkupdata-footer-links">
+            <li>
+              <a href="/privacy-policy">Privacy Policy</a>
+            </li>
+            <li>
+              <a href="/terms-and-conditions">Terms & Conditions</a>
+            </li>
+          </ul>
+        </div>
+
+                {/* Socials Section */}
+                <div className="bulkupdata-footer-section">
           <h3 className="bulkupdata-footer-title">Follow Us</h3>
           <div className="bulkupdata-footer-socials">
             <a
@@ -56,6 +69,8 @@ const Footer = () => {
             </a>
           </div>
         </div>
+
+        
       </div>
 
       <div className="bulkupdata-footer-bottom">

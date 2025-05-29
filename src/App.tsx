@@ -1,34 +1,97 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "./LandingPage/Index";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+} from "react-router-dom";
 import Navbar from "./LandingPage/NewNav/NewNav";
-//import FAQPage from "./LandingPage/FAQs/FAQPage";
 import Footer from "./LandingPage/footer/Footer";
-// import SignIn from "./Auth/SignIn";
+import Hero from "./LandingPage/Hero/Hero";
+import RechargeInstructions from "./LandingPage/RechargeInstructions/RechargeInstructions";
+import SlidingPage from "./Components/SlidingPage/SlidingPage";
+import PrivacyPolicy from "./LandingPage/PrivacyPolicy/PrivacyPolicy";
+import TermsAndConditions from "./LandingPage/PrivacyPolicy/TermsAndConditions";
+import ScrollToTop from "./ScrollToTop";
+import PaymentSuccess from "./LandingPage/Status/PaymentSuccess";
+import PaymentRedirectHandler from "./LandingPage/Modal/PaymentRedirectHandler";
+
+// Import the new status pages (adjust paths if needed)
+import RechargeSuccess from "./LandingPage/Status/RechargeSuccess";
+import RechargeFailure from "./LandingPage/Status/RechargeFailure";
 
 function App() {
   return (
     <Router>
+      <PaymentRedirectHandler />
+      <ScrollToTop />
       <Routes>
         <Route
           path="/"
           element={
             <>
-              <Navbar /> <Index />
+              <Navbar />
+              <Hero />
+              <RechargeInstructions />
+              <SlidingPage />
               <Footer />
             </>
           }
         />
-        {/* <Route
-          path="/faq"
+
+        <Route
+          path="/payment-success"
           element={
             <>
-              <Navbar /> <FAQPage />
+              <Navbar />
+              <PaymentSuccess />
               <Footer />
             </>
           }
-        /> */}
-        {/* <Route path="/auth-sign-in" element={<SignIn />} /> */}
+        />
+
+        {/* New routes for recharge success and failure */}
+        <Route
+          path="/recharge-success"
+          element={
+            <>
+              <Navbar />
+              <RechargeSuccess />
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/recharge-failure"
+          element={
+            <>
+              <Navbar />
+              <RechargeFailure />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/privacy-policy"
+          element={
+            <>
+              <Navbar />
+              <PrivacyPolicy />
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/terms-and-conditions"
+          element={
+            <>
+              <Navbar />
+              <TermsAndConditions />
+              <Footer />
+            </>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -1,22 +1,27 @@
+/* Prevent horizontal overflow and ensure full device width */
 .hero {
-    background-size: cover;
-    /* changed from contain */
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 80vh;
-    width: 100vw;
-    /* use vw to ensure it spans full screen width */
-    margin: 0;
-    padding: 0;
+    width: 100%;
+    /* Use 100% of parent/container width */
+    max-width: 100vw;
+    /* Maximum is viewport width */
+    padding: 160px 16px 120px;
+    margin: 0 auto;
+    /* Center horizontally if smaller */
+    box-sizing: border-box;
+    /* Include padding in width */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     color: white;
     text-align: center;
-    overflow: hidden;
     gap: 32px;
-
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .hero::before {
@@ -26,61 +31,77 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #00000099;
-    /* good overlay */
     z-index: 1;
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
-    /* max-width: 800px; */
-    padding: 20px;
-    max-width: 700px
+    width: 100%;
+    /* fill width of .hero */
+    max-width: 650px;
+    /* max width to control content */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* center content */
+    justify-content: center;
+    box-sizing: border-box;
 }
 
+.hero-content-tray {
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.hero-content-tray-h3 {
+    text-align: center;
+}
 .hero h1 {
-    font-size: 2.9rem;
-    margin-bottom: 1rem;
-    text-transform: uppercase;
-    text-align: center;
+    font-size: 3.2rem;
+}
+
+.hero-p {
+    font-size: 1.1rem;
 }
 
 
-.hero p {
-    font-size: 1rem;
-    text-align: center;
-    padding-left: 24px;
+.hero-content-tray-p{
+    text-align: left;
 }
-
-.buy-data-button {
-    width: 350px
-}
-
-/* Mobile responsive */
+/* Responsive tweaks */
 @media (max-width: 768px) {
+    .hero {
+        padding: 140px 16px;
+    }
+
+    .hero-content-tray-h3 {
+        text-align: left;
+    }
+
+    .hero-content-tray {
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+
+    .hero-content {
+        max-width: 100%;
+        /* fill width on small devices */
+        align-items: flex-start;
+        /* align left on mobile */
+        justify-content: flex-start;
+    }
+
     .hero h1 {
         font-size: 1.6rem;
         text-align: left;
-        padding-left: 0px;
-    }
-
-    .buy-data-button {
-        width: 100%
+        padding-left: 0;
     }
 
     .hero p {
         font-size: 0.8rem;
         text-align: left;
-        padding-left: 0px;
+        padding-left: 0;
     }
-
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        /* max-width: 800px; */
-        padding: 12px;
-        width: 100%
-    }
-
 }

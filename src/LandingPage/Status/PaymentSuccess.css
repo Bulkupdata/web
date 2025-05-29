@@ -1,0 +1,88 @@
+.payment-success-container {
+    max-width: 480px;
+    margin-top: 120px;
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 64px;
+    padding: 120px 12px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+    text-align: center;
+    color: #333;
+    /* height: 60vh; */
+    min-height: 8vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* vertical centering */
+    align-items: center;
+    /* horizontal centering */
+}
+
+.loading,
+.error {
+    max-width: 400px;
+    margin: 320px auto;
+    padding: 1.5rem 1rem;
+    background-color: #fff8f8;
+    border-radius: 8px;
+    border: 1px solid #e03e3e;
+    color: #e03e3e;
+    font-weight: 600;
+    font-size: 1.1rem;
+    height: fit-content;
+
+    /* Optional: center content horizontally */
+    text-align: center;
+}
+
+.success-title {
+    color: #28a745;
+    /* Bootstrap green */
+    font-size: 2.2rem;
+    margin-bottom: 0.4rem;
+}
+
+.thank-you {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #555;
+}
+
+.payment-details p {
+    font-size: 1.1rem;
+    margin: 0.6rem 0;
+    color: #444;
+}
+
+.payment-details strong {
+    color: #222;
+}
+
+.payment-error {
+    text-align: center;
+    padding: 2rem;
+    background-color: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #e74c3c;
+    border-radius: 10px;
+    margin: 2rem;
+}
+
+.retry-button {
+    margin-top: 1rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+    background-color: #c0392b;
+}

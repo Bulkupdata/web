@@ -1,21 +1,54 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Podkova:wght@400..800&display=swap'); */
+
+/* Root Variables */
 :root {
   font-family: 'Mont', sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --primary-font: 'Mont', sans-serif;
 
-  color-scheme: light dark;
+  /* --secondary-font: 'Podkova', serif; */
+  --secondary-font: 'Mont', sans-serif;
 
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --bg-color: #ffffff;
+  --text-color: #333;
+  --primary-color: #515FDF;
+  --secondary-color: #f0a500;
 }
+
+/* index.css or App.css */
+
+
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Mont', sans-serif;
-  /* font-family: 'Plus Jakarta Sans', sans-serif; */
+
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+p,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Mont', sans-serif;
+
+}
+
+h1 {
+  font-family: var(--primary-font);
 }

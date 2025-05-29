@@ -1,0 +1,57 @@
+/* StatusPages.css */
+
+.status-container {
+    max-width: 450px;
+    margin: 5.8rem auto;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+    color: #333;
+
+    min-height: 80vh;
+    /* Added minimum height */
+}
+
+.status-icon {
+    font-size: 3.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.status-title {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.status-message {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    color: #555;
+}
+
+.status-details p {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+    color: #444;
+}
+
+.status-strong {
+    font-weight: 600;
+}
+
+/* Specific styles by status */
+
+.success {
+    border-left: 6px solid #4caf50;
+    background: linear-gradient(135deg, #e6f4ea, #d3e9d3);
+    color: #2f5d32;
+}
+
+.failure {
+    border-left: 6px solid #f44336;
+    background: linear-gradient(135deg, #fcebea, #f9d6d5);
+    color: #721c24;
+}
