@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import "./PolicyTerms.css";
-import PaystackPayment from "../Modal/Pay";
-import PayWithPaystack from "../Modal/PayWithPaystack";
+// import PaystackPayment from "../Modal/Pay";
+// import PayWithPaystack from "../Modal/PayWithPaystack";
 
 const PrivacyPolicy = () => {
   useEffect(() => {
@@ -16,8 +16,8 @@ const PrivacyPolicy = () => {
       <h1 className="policy-title" data-aos="zoom-up">
         Privacy Policy
       </h1>
-      <PaystackPayment />
-      <PayWithPaystack />
+      {/* <PaystackPayment />
+      <PayWithPaystack /> */}
       <p data-aos="zoom-up">
         At BulkUpData, your privacy is our priority. This policy outlines how we
         collect, use, and protect your personal information when you use our
