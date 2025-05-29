@@ -13,6 +13,7 @@
   --text-color: #333;
   --primary-color: #515FDF;
   --secondary-color: #f0a500;
+
 }
 
 /* index.css or App.css */
@@ -23,6 +24,8 @@ html,
 body {
   width: 100%;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%; 
+  touch-action: manipulation;
 }
 
 
