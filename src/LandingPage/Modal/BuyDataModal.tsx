@@ -525,7 +525,7 @@ const BuyDataModal = ({
                 const response = await axios.post(
                   `${BaseUrl}/api/reloadly/create-paystack-payment`,
                   {
-                    email: "ibenemeikenna2021@gmail.com",
+                    email: "bulkupdata@gmail.com",
                     amount: selectedBundle.price, // Naira
                     callback_url: `${WebBaseUrl}/payment-success`,
                     currency: "NGN",
