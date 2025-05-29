@@ -542,7 +542,7 @@ const BuyDataModal = ({
               }
             }}
           >
-            {loading ? "Processing..." : "Buy Data"}
+            {loading ? "Processing..." : `Buy ${buyData ? "Data" : "Airtime"}`}
           </button>
         )}
       </div>
