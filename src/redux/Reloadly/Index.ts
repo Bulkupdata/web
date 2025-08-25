@@ -13,6 +13,7 @@ interface ReloadlyState {
     topupResponse: any | null;
     topupStatus: any | null;
     transactionDetails: any | null;
+    recharges: any[];
     loading: boolean;
     error: string | null;
 }
@@ -25,6 +26,7 @@ const initialState: ReloadlyState = {
     topupResponse: null,
     topupStatus: null,
     transactionDetails: null,
+    recharges: [],
     loading: false,
     error: null,
 };
@@ -52,6 +54,30 @@ export const fetchOperatorById = createAsyncThunk(
             return response.data;
         } catch (error: any) {
             console.error('❌ fetchOperatorById error:', error.message);
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);
+
+export const autoDetectOperatorGroup = createAsyncThunk(
+    "reloadly/autoDetectOperatorGroup",
+    async (
+        { phones, countryCode }: { phones: string[]; countryCode: string },
+        thunkAPI
+    ) => {
+        try {
+            // The backend route handles the country code conversion, so we pass it directly.
+            const response = await axios.post(
+                `${API_URL}/operators/auto-detect/group/group`,
+                {
+                    numbers: phones,
+                    countryCode: countryCode,
+                }
+            );
+            console.log("✅ autoDetectOperatorGroup response:", response.data);
+            return response.data; // Return the data from the backend response
+        } catch (error: any) {
+            console.error("❌ autoDetectOperatorGroup error:", error.message);
             return thunkAPI.rejectWithValue(error.message);
         }
     }
@@ -109,23 +135,31 @@ export const makeTopup = createAsyncThunk(
 );
 
 export const makeMainTopup = createAsyncThunk<
-    any,               // return type of fulfilled action
-    { ref: string; payload: any },  // argument type
+    any, // return type of fulfilled action
+    { ref: string; payload: any }, // argument type
     { rejectValue: string }
 >(
-    'reloadly/makeMainTopup',
+    "reloadly/makeMainTopup",
     async ({ ref, payload }, thunkAPI) => {
         try {
-            const response = await axios.post(`${API_URL}/main-topup/${ref}`, payload);
-            console.log('✅ makeMainTopup response:', response.data);
+            // ✅ Ensure payload is always an array
+            const finalPayload = Array.isArray(payload) ? payload : [payload];
+
+            console.log("✅ makeMainTopup payload (array):", finalPayload);
+
+            const response = await axios.post(
+                `${API_URL}/main-topup/${ref}`,
+                finalPayload
+            );
+
+            console.log("✅ makeMainTopup response:", response.data);
             return response.data;
         } catch (error: any) {
-            console.error('❌ makeMainTopup error:', error.message);
+            console.error("❌ makeMainTopup error:", error);
             return thunkAPI.rejectWithValue(error.message);
         }
     }
 );
-
 
 export const getTopupStatus = createAsyncThunk(
     'reloadly/getTopupStatus',
@@ -142,18 +176,67 @@ export const getTopupStatus = createAsyncThunk(
 );
 
 export const getTransactionDetails = createAsyncThunk(
-    'reloadly/getTransactionDetails',
-    async (transactionId: string, thunkAPI) => {
+    "reloadly/getTransactionDetails",
+    async (
+        {
+            size = 200,
+            page,
+            countryCode,
+            operatorId,
+        }: { size?: number; page?: number; countryCode?: string; operatorId?: any },
+        thunkAPI
+    ) => {
         try {
-            const response = await axios.get(`${API_URL}/transactions/${transactionId}`);
-            console.log('✅ getTransactionDetails response:', response.data);
+            // Build query params dynamically
+            const queryParams = new URLSearchParams({
+                size: String(size),
+                page: page ? String(page) : "1",
+            });
+
+            if (countryCode) queryParams.append("countryCode", countryCode);
+            if (operatorId) queryParams.append("operatorId", String(operatorId));
+
+            const response = await axios.get(
+                `${API_URL}/transactions/all?${queryParams.toString()}`
+            );
+
+            console.log("✅ getTransactionDetails response:", response.data);
             return response.data;
         } catch (error: any) {
-            console.error('❌ getTransactionDetails error:', error.message);
+            console.error("❌ getTransactionDetails error:", error.message);
             return thunkAPI.rejectWithValue(error.message);
         }
     }
 );
+
+// ✅ Add new async thunk for fetching recharges for a user
+export const fetchUserRecharges = createAsyncThunk(
+    'reloadly/fetchUserRecharges',
+    async (userId: string,) => {
+        try {
+            const response = await axios.get(`${API_URL}/operators/recharges-fetch/recharge/by-user/${userId}`);
+            console.log('✅ fetchUserRecharges response:', response.data);
+            return response.data;
+        } catch (error: any) {
+            console.error('❌ fetchUserRecharges error:', error.message);
+            return error;
+        }
+    }
+);
+
+export const fetchAllRecharges = createAsyncThunk(
+    'reloadly/fetchAllRecharges',
+    async (_, thunkAPI) => {
+        try {
+            const response = await axios.get(`${API_URL}/recharges/all`);
+            return response.data.data;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
+    }
+);
+
+
 
 // Slice
 const reloadlySlice = createSlice({
@@ -195,6 +278,18 @@ const reloadlySlice = createSlice({
             .addCase(fetchOperatorById.rejected, (state, action) => {
                 state.error = action.error.message || 'Failed to fetch operator by ID';
                 console.error('Failed to fetch operator by ID:', action.error);
+            })
+            .addCase(autoDetectOperatorGroup.pending, (state) => {
+                state.error = null;
+                console.log('Auto detecting operator...');
+            })
+            .addCase(autoDetectOperatorGroup.fulfilled, (state, action) => {
+                state.autoDetectedOperator = action.payload;
+                console.log('Auto detected operator:', action.payload);
+            })
+            .addCase(autoDetectOperatorGroup.rejected, (state, action) => {
+                state.error = action.error.message || 'Failed to auto detect operator';
+                console.error('Failed to auto detect operator:', action.error);
             })
 
             // Auto Detect
@@ -278,7 +373,40 @@ const reloadlySlice = createSlice({
             .addCase(getTransactionDetails.rejected, (state, action) => {
                 state.error = action.error.message || 'Failed to get transaction details';
                 console.error('Failed to get transaction details:', action.error);
-            });
+            })
+
+            // ✅ Add new cases for the fetchUserRecharges async thunk
+            .addCase(fetchUserRecharges.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                console.log('Fetching user recharges...');
+            })
+            .addCase(fetchUserRecharges.fulfilled, (state, action) => {
+                state.loading = false;
+                state.recharges = action.payload;
+                console.log('Fetched user recharges:', action.payload);
+            })
+            .addCase(fetchUserRecharges.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Failed to fetch user recharges';
+                console.error('Failed to fetch user recharges:', action.error);
+            })
+            .addCase(fetchAllRecharges.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                console.log('Fetching user recharges...');
+            })
+            .addCase(fetchAllRecharges.fulfilled, (state, action) => {
+                state.loading = false;
+                state.recharges = action.payload;
+                console.log('Fetched user recharges:', action.payload);
+            })
+            .addCase(fetchAllRecharges.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Failed to fetch user recharges';
+                console.error('Failed to fetch user recharges:', action.error);
+            })
+       
     }
 });
 

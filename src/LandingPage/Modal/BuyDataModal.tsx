@@ -1,25 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./BuyDataModal.css";
 import Modal from "./Modal";
 import { useTheme } from "../../contexts/ThemeContext";
-import {
-  airtimeBundles,
-  categories,
-  dataBundles,
-  networks as initialNetworks,
-} from "./utils";
+import { airtimeBundles, dataBundles } from "./utils"; // Removed initialNetworks
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { autoDetectOperator } from "../../redux/Reloadly/Index";
 import { v4 as uuidv4 } from "uuid";
 import { BaseUrl, WebBaseUrl } from "../../redux/baseurl";
 import axios from "axios";
-
-// interface Network {
-//   operatorId: number;
-//   name: string;
-//   nickname: string;
-// }
+import { FaChevronRight } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const BuyDataModal = ({
   onClose,
@@ -32,45 +23,111 @@ const BuyDataModal = ({
 }) => {
   const { setSelectedProvider } = useTheme();
   const [selectedNetwork, setSelectedNetwork] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Daily");
+  const [selectedCategory, setSelectedCategory] = useState("daily"); // Default to lowercase
   const [selectedBundle, setSelectedBundle] = useState<any>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  //const [networksState, setNetworksState] = useState<Network[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [operatorID, setOperatorID] = useState("");
   const [operatorName, setOperatorName] = useState("");
-  const [operatorNickname, setOperatorNickname] = useState(""); //Airtel
-  const [airtelData, setAirtelData] = useState("1256");
-  const [MTNData, setMTNData] = useState("346");
-
-  // const [gloData, setGloData] = useState("1256");
-  // const [mobileData, set9mobileData] = useState("1256");
-
-  //1256
+  const [operatorNickname, setOperatorNickname] = useState("");
   const [buyData, setBuyData] = useState(true);
-  const [operatorLoading, setOperatorLoading] = useState(false); // 👈 loading state
+  const [operatorLoading, setOperatorLoading] = useState(false);
   const [operatorlogoUrls, setOperatorlogoUrls] = useState("");
-  //logoUrls
-  console.log(operatorID, operatorName, operatorNickname, "operatorNickname");
+
+  // Helper function to format category names
+  const formatCategoryName = (name: string) => {
+    if (!name) return "";
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
+
+  const filterBundles = (category: string, operatorNickname: string) => {
+    if (!operatorNickname) return [];
+
+    const normalizedNickname = operatorNickname.toLowerCase();
+    const allBundles = dataBundles.filter(
+      (b) => b.network.toLowerCase() === normalizedNickname
+    );
+
+    if (allBundles.length === 0) {
+      return [];
+    }
+
+    // Filter based on the planType (category)
+    return allBundles.filter(
+      (b) => b.planType.toLowerCase() === category.toLowerCase()
+    );
+  };
+
+  // Dynamically generate categories from the dataBundles based on the detected network
+  const categories = useMemo(() => {
+    if (!operatorNickname) return [];
+
+    const allAvailablePlanTypes = new Set<string>();
+    dataBundles.forEach((b) => {
+      if (b.network.toLowerCase() === operatorNickname.toLowerCase()) {
+        allAvailablePlanTypes.add(b.planType.toLowerCase());
+      }
+    });
+
+    // Define a preferred order for categories
+    const orderedCategories = [
+      "daily",
+      "2 days",
+      "weekly",
+      "7 days",
+      "monthly",
+      "30 days",
+      "60 days",
+      "90 days",
+      "120 days",
+      "365 days",
+      "unknown",
+    ];
+
+    // Filter and sort the categories
+    const filteredCategories = orderedCategories.filter((cat) =>
+      allAvailablePlanTypes.has(cat)
+    );
+
+    // Set the first available category as default if the current selectedCategory is not available
+    if (
+      filteredCategories.length > 0 &&
+      !filteredCategories.includes(selectedCategory.toLowerCase())
+    ) {
+      setSelectedCategory(filteredCategories[0]);
+    } else if (filteredCategories.length === 0) {
+      setSelectedCategory(""); // No categories available
+    }
+
+    return filteredCategories;
+  }, [operatorNickname, dataBundles, selectedCategory]); // Added dataBundles and selectedCategory to dependencies
 
   useEffect(() => {
-    setMTNData("346");
-    setAirtelData("1256");
-    setBuyData(true);
-    const processedNetworks = initialNetworks.map((net) => ({
-      operatorId: net.id,
-      name: net.name,
-      nickname: net.nickname || net.name.toLowerCase(),
-    }));
-    console.log(processedNetworks, "processedNetworks");
-    //setNetworksState(processedNetworks as any);
-  }, []);
+    // This effect runs when operatorNickname changes, ensuring categories are updated
+    // and a valid default category is set.
+
+    console.log(themeMode, "themeMode");
+    if (operatorNickname && categories.length > 0) {
+      // If the current selectedCategory is not in the new list of categories,
+      // or if it's empty, set the first available category as default.
+      if (
+        !categories.includes(selectedCategory.toLowerCase()) ||
+        selectedCategory === ""
+      ) {
+        setSelectedCategory(categories[0]);
+      }
+    } else if (!operatorNickname) {
+      setSelectedCategory("daily"); // Reset to a default when no operator is detected
+    }
+  }, [operatorNickname, categories]); // Depend on operatorNickname and categories
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(themeMode, "daily,", "themeMode");
+
     setError("");
     let value = e.target.value;
     if (value.startsWith("+234")) {
@@ -80,25 +137,28 @@ const BuyDataModal = ({
     }
     setPhoneNumber(value);
 
-    const isValid = validatePhoneNumber(value);
-
-    if (isValid) {
+    if (value.length >= 5) {
+      // Trigger auto-detect after a few digits
       setOperatorLoading(true);
       dispatch(autoDetectOperator({ phone: value, countryCode: "+234" }))
         .unwrap()
         .then((res) => {
           console.log("✅ Auto detect success:", res);
-          const name = res?.name || "";
-          const ID = res?.operatorId || "";
-          const nickname = name.split(" ")[0];
-          const logoUrls = res.logoUrls[0];
+          // This is the correct logic for setting the state
+          const operatorData = res; // Use the entire response object
+
+          const name = operatorData?.name || "";
+          const ID = operatorData?.id || ""; // Set the ID from the response's 'id' field
+          const nickname = name.toLowerCase().split(" ")[0]; // Correctly get the nickname
+          const logoUrls = operatorData.logoUrls[0];
 
           setOperatorlogoUrls(logoUrls);
           setOperatorName(name);
-          setOperatorID(ID);
+          setOperatorID(ID); // This is where the ID is stored
           setOperatorNickname(nickname);
           setSelectedNetwork(nickname);
           setSelectedProvider(nickname);
+          setSelectedBundle(null); // Reset selected bundle when network changes
         })
         .catch((err) => {
           console.error("❌ Auto detect error:", err);
@@ -106,44 +166,44 @@ const BuyDataModal = ({
           setOperatorName("");
           setOperatorID("");
           setOperatorNickname("");
+          setSelectedNetwork(""); // Reset selected network on error
+          setSelectedBundle(null); // Reset selected bundle on error
         })
         .finally(() => {
           setOperatorLoading(false);
         });
+    } else {
+      setOperatorName("");
+      setOperatorID("");
+      setOperatorNickname("");
+      setSelectedNetwork("");
+      setSelectedBundle(null);
+      setOperatorlogoUrls(""); // Clear logo
     }
+
+    validatePhoneNumber(value);
   };
 
   const validatePhoneNumber = (input: string) => {
     const cleanedInput = input.replace(/\s+/g, "");
-    let num = cleanedInput.startsWith("+234")
-      ? cleanedInput.slice(4)
-      : cleanedInput;
+    const num = cleanedInput.startsWith("0")
+      ? cleanedInput
+      : `0${cleanedInput}`;
 
-    const onlyDigits = /^\d*$/;
+    const onlyDigits = /^\d+$/;
 
     if (!onlyDigits.test(num)) {
       setPhoneError("Only digits are allowed.");
       return false;
     }
 
-    if (num?.startsWith("0")) {
-      if (num?.length > 11) {
-        setPhoneError("Phone number cannot exceed 11 digits.");
-        return false;
-      }
-      if (num?.length < 11) {
-        setPhoneError(`Must be 11 digits, ${11 - num?.length} left`);
-        return false;
-      }
-    } else {
-      if (num?.length > 10) {
-        setPhoneError("Phone number cannot exceed 10 digits.");
-        return false;
-      }
-      if (num?.length < 10) {
-        setPhoneError(`Must be 10 digits, ${10 - num?.length} left`);
-        return false;
-      }
+    if (num.length > 11) {
+      setPhoneError("Phone number cannot exceed 11 digits.");
+      return false;
+    }
+    if (num.length < 11 && num.length > 0) {
+      setPhoneError(`Must be 11 digits, ${11 - num.length} left`);
+      return false;
     }
 
     setPhoneError("");
@@ -152,43 +212,10 @@ const BuyDataModal = ({
 
   if (!isOpen) return null;
 
-  const filterBundles = (category: string, operatorNickname: string) => {
-    // Return no bundles if operatorNickname is falsy (null, undefined, or empty string)
-    if (!operatorNickname) return [];
-
-    const allBundles = dataBundles.filter(
-      (b) => b.network === operatorNickname
-    );
-
-    if (category === "Daily")
-      return allBundles.filter(
-        (b) =>
-          b.validity.includes("day") &&
-          (b.validity.includes("1") ||
-            b.validity.includes("2") ||
-            b.validity.includes("3"))
-      );
-
-    if (category === "Weekly")
-      return allBundles.filter((b) => b.validity === "1 week");
-
-    if (category === "Two Weeks")
-      return allBundles.filter((b) => b.validity === "2 weeks");
-
-    if (category === "Monthly")
-      return allBundles.filter((b) => b.validity === "30 days");
-
-    if (category === "60 Days")
-      return allBundles.filter((b) => b.validity === "60 days");
-
-    return [];
-  };
-
   const handleBundleClick = (bundle: any) => {
     setSelectedBundle(bundle);
     console.log("Selected bundle:", bundle);
   };
-  console.log("Selected selectedNetwork:", selectedNetwork);
 
   const activeStyle = {
     color: "#000",
@@ -212,26 +239,45 @@ const BuyDataModal = ({
   return (
     <Modal onClose={onClose}>
       <div className={`modal ${selectedNetwork}`}>
-        {/* <button className="close-button" onClick={onClose}>
-          Cancel
-        </button> */}
-
         <div style={{ display: "flex", gap: 10, marginBottom: 24 }}>
           <p
             style={buyData ? activeStyle : inactiveStyle}
-            onClick={() => setBuyData(true)}
+            onClick={() => {
+              setBuyData(true);
+              setSelectedBundle(null); // Clear selected bundle when switching type
+            }}
           >
             Buy Data
           </p>
 
           <p
             style={!buyData ? activeStyle : inactiveStyle}
-            onClick={() => setBuyData(false)}
+            onClick={() => {
+              setBuyData(false);
+              setSelectedBundle(null); // Clear selected bundle when switching type
+            }}
           >
             Buy Airtime
           </p>
         </div>
 
+        <div
+          style={{
+            backgroundColor: themeMode?.backgroundColor,
+            padding: "16px",
+            borderRadius: "8px",
+            color: themeMode?.textColor,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            cursor: "pointer",
+            marginBottom: 24,
+          }}
+          onClick={() => navigate("/bulk-data")}
+        >
+          <h3 style={{ margin: 0, fontSize: 15 }}>Click to Buy Bulk</h3>
+          <FaChevronRight />
+        </div>
         <label htmlFor="phone" style={{ fontSize: 13, marginTop: 10 }}>
           Phone Number
         </label>
@@ -308,23 +354,6 @@ const BuyDataModal = ({
           </div>
         )}
 
-        {/* <select
-          id="network"
-          value={selectedNetwork}
-          onChange={(e) => {
-            const val = e.target.value;
-            setSelectedNetwork(val);
-            setSelectedProvider(val);
-          }}
-        >
-          <option value="">Select a network</option>
-          {networksState.map((net) => (
-            <option key={net.operatorId} value={net.name}>
-              {net.name}
-            </option>
-          ))}
-        </select> */}
-
         {buyData ? (
           operatorNickname?.trim() && (
             <>
@@ -338,26 +367,30 @@ const BuyDataModal = ({
                       key={cat}
                       style={{
                         backgroundColor:
-                          selectedCategory === cat
+                          selectedCategory.toLowerCase() === cat.toLowerCase()
                             ? themeMode?.backgroundColor
                             : "#f5f5f5",
                         color:
-                          selectedCategory === cat
+                          selectedCategory.toLowerCase() === cat.toLowerCase()
                             ? themeMode?.textColor
                             : "#000",
                         border: "none",
                         borderBottom:
-                          selectedCategory === cat ? "none" : "none",
+                          selectedCategory.toLowerCase() === cat.toLowerCase()
+                            ? "none"
+                            : "none",
                       }}
                       className={`category-btn ${
-                        selectedCategory === cat ? "active" : ""
+                        selectedCategory.toLowerCase() === cat.toLowerCase()
+                          ? "active"
+                          : ""
                       }`}
                       onClick={() => {
                         setSelectedCategory(cat);
                         setSelectedBundle(null);
                       }}
                     >
-                      {cat}
+                      {formatCategoryName(cat)}
                     </button>
                   ))}
                 </div>
@@ -370,29 +403,42 @@ const BuyDataModal = ({
                   {filterBundles(selectedCategory, operatorNickname).map(
                     (bundle, index) => (
                       <div
-                        key={index}
+                        key={bundle.id || index} // Use bundle.id for a stable key
                         style={{
                           backgroundColor:
-                            selectedBundle?.size === bundle.size
+                            selectedBundle?.id === bundle.id
                               ? "#000"
                               : "#f5f5f5",
                           color:
-                            selectedBundle?.size === bundle.size
-                              ? "#fff"
-                              : "#000",
+                            selectedBundle?.id === bundle.id ? "#fff" : "#000",
                           border: "none",
                         }}
                         className={`bundle-card ${
-                          selectedBundle?.size === bundle.size ? "selected" : ""
+                          selectedBundle?.id === bundle.id ? "selected" : ""
                         }`}
                         onClick={() => handleBundleClick(bundle)}
                       >
-                        <p style={{ fontWeight: 700, fontSize: 16 }}>
-                          {bundle.size}
+                        <p
+                          style={{
+                            fontWeight: 700,
+                            fontSize: 15,
+                            marginTop: 10,
+                          }}
+                        >
+                          {bundle.retailDataAmount}
                         </p>
-                        <p>₦{bundle.price}</p>
+                        <p
+                          style={{
+                            fontWeight: 500,
+                            fontSize: 12,
+                            marginTop: 10,
+                          }}
+                        >
+                          ₦
+                          {bundle?.retailPrice?.toLocaleString()?.toLowerCase()}
+                        </p>
                         <p style={{ fontSize: 10, marginTop: 6 }}>
-                          {bundle.validity}
+                          {formatCategoryName(bundle.planType)}
                         </p>
                       </div>
                     )
@@ -431,7 +477,7 @@ const BuyDataModal = ({
                     }`}
                     onClick={() => setSelectedBundle(airtime)}
                   >
-                    {airtime.amount}
+                    {airtime?.amount?.toLocaleString()?.toLowerCase()}
                   </button>
                 ))}
               </div>
@@ -449,56 +495,36 @@ const BuyDataModal = ({
             className="buy-button"
             onClick={async () => {
               console.log(selectedBundle, "selectedBundle");
+
               if (!phoneNumber) {
                 alert("Please enter your phone number.");
                 return;
               }
 
-              if (!selectedNetwork || !selectedBundle) {
+              if (!operatorID || !selectedBundle) {
                 alert("Please select a network and a data bundle.");
                 return;
               }
 
               try {
-                // Display confirmation
-                // alert(
-                //   `Buying ${selectedBundle.size} for ₦${
-                //     selectedBundle.price
-                //   } on ${selectedNetwork.toUpperCase()} to phone +234${phoneNumber}`
-                // );
-
+                console.log(selectedBundle, "selectedBundle");
                 const timestamp = Date.now();
-                const customId = `${uuidv4()}_${timestamp}`;
+                const itemId = `${uuidv4()}_${timestamp}`; // Generate a new unique ID
 
-                let operatorId;
-
-                if (buyData) {
-                  console.log("buyData is true");
-                  if (operatorNickname === "Airtel") {
-                    console.log("Operator is Airtel. Using airtelData.");
-                    operatorId = airtelData;
-                  } else if (operatorNickname === "MTN") {
-                    console.log("Operator is MTN. Using MTNData.");
-                    operatorId = MTNData;
-                  } else {
-                    console.log(
-                      `Operator is ${operatorNickname}. Using fallback operatorID.`
-                    );
-                    operatorId = operatorID;
-                  }
-                } else {
-                  console.log("buyData is false. Using operatorID.");
-                  operatorId = operatorID;
-                }
-                console.log("Final operatorId:", operatorId);
-
+                // Create the payload for the current transaction
                 const topupPayload = {
-                  operatorId,
-                  amount: selectedBundle?.fixedPrice,
-                  //amountNew: selectedBundle.fixedPrice.toFixed(2),
+                  id: itemId,
+                  operatorId: selectedBundle?.operatorId ?? operatorID,
+                  retailDataAmount: selectedBundle?.retailDataAmount,
+                  retailPrice:
+                    selectedBundle?.retailPrice ?? selectedBundle?.price,
+                  operatorNickname,
+                  amount: buyData
+                    ? selectedBundle.planAmount
+                    : selectedBundle.fixedPrice,
                   useLocalAmount: true,
-                  customIdentifier: customId,
-                  recipientEmail: "ceo@lukasdesignlab.com",
+                  customIdentifier: itemId,
+                  recipientEmail: "bulkupdata@gmail.com",
                   recipientPhone: {
                     countryCode: "NG",
                     number: phoneNumber,
@@ -507,17 +533,36 @@ const BuyDataModal = ({
                     countryCode: "NG",
                     number: phoneNumber,
                   },
+                  batchId: `${uuidv4()}_${timestamp}`,
+                  status: "pending",
+                  planType: selectedBundle?.planType,
                 };
+                console.log("Operator ID:", selectedBundle.planType);
+                console.log("Operator Nickname:", operatorNickname);
 
-                const existingTopup = localStorage.getItem("topupPayload");
-                if (existingTopup) {
-                  console.log("⚠️ topupPayload already exists. Updating...");
+                const storedPayloads = JSON.parse(
+                  localStorage.getItem("topupPayloads") || "[]"
+                );
+
+                const existingItemIndex = storedPayloads.findIndex(
+                  (item: any) =>
+                    item.recipientPhone.number === phoneNumber &&
+                    item.planType === selectedBundle.planType
+                );
+
+                if (existingItemIndex !== -1) {
+                  console.log(
+                    "✅ Updating existing topupPayload in localStorage."
+                  );
+                  storedPayloads[existingItemIndex] = topupPayload;
                 } else {
-                  console.log("✅ Storing new topupPayload to localStorage.");
+                  console.log("✅ Adding new topupPayload to localStorage.");
+                  storedPayloads.push(topupPayload);
                 }
+
                 localStorage.setItem(
-                  "topupPayload",
-                  JSON.stringify(topupPayload)
+                  "topupPayloads",
+                  JSON.stringify(storedPayloads)
                 );
 
                 setLoading(true);
@@ -526,7 +571,9 @@ const BuyDataModal = ({
                   `${BaseUrl}/api/reloadly/create-paystack-payment`,
                   {
                     email: "bulkupdata@gmail.com",
-                    amount: selectedBundle.price, // Naira
+                    amount: buyData
+                      ? selectedBundle.retailPrice
+                      : selectedBundle.price,
                     callback_url: `${WebBaseUrl}/payment-success`,
                     currency: "NGN",
                   }

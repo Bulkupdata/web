@@ -1,57 +1,208 @@
-/* StatusPages.css */
-
+/* ====== Layout ====== */
 .status-container {
-    max-width: 450px;
-    margin: 5.8rem auto;
-    padding: 2.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
-    color: #333;
+    --radius: 14px;
+    --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    --border: 1px solid rgba(0, 0, 0, 0.06);
+    --text: #2b2b2b;
+    --muted: #6b7280;
+    /* gray-500 */
+    --bg: #f7f8fa;
+    --success: #22c55e;
+    /* green-500 */
+    --success-ink: #166534;
+    /* green-800 */
+    --fail: #ef4444;
+    /* red-500 */
+    --pending: #0ea5e9;
+    /* sky-500 */
+    --card: #ffffff;
 
-    min-height: 80vh;
-    /* Added minimum height */
+    min-height: 100vh;
+    padding: 40px 16px;
+    background: radial-gradient(1200px 600px at 50% -100px, #e8f7ef 0%, transparent 60%),
+        radial-gradient(1200px 600px at 50% 120%, #eaf2ff 0%, transparent 60%),
+        var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
 }
 
+/* Success variant container accent */
+.status-container.success .status-card {
+    border-left: 6px solid var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ====== Card ====== */
+.status-card,
+.status-container.success {
+    width: 100%;
+    max-width: 720px;
+    align-self: center;
+    /* max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; */
+}
+
+.status-container.success {
+    background: transparent;
+}
+
+.status-inner {
+    background: var(--card);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+}
+
+/* ====== Header ====== */
 .status-icon {
-    font-size: 3.5rem;
-    margin-bottom: 0.75rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--success-ink);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    margin: 0 auto 14px auto;
 }
 
 .status-title {
-    font-size: 2.25rem;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
+    margin: 0;
+    text-align: center;
+    font-size: 1.75rem;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    /* slate-900 */
 }
 
 .status-message {
-    font-size: 1.1rem;
-    margin-bottom: 1.25rem;
-    color: #555;
+    margin: 8px 0 18px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.985rem;
 }
 
-.status-details p {
-    font-size: 1rem;
-    margin: 0.3rem 0;
-    color: #444;
+/* Reference line */
+.status-container .status-ref {
+    text-align: center;
+    margin-bottom: 18px;
+    color: #475569;
+    /* slate-600 */
+    font-size: 0.95rem;
 }
 
+/* ====== Details Grid ====== */
+.status-details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 10px;
+}
+
+@media (min-width: 560px) {
+    .status-details {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Each result item */
+.status-item {
+    background: #ffffff;
+    border: var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.status-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* Item rows */
+.status-item p {
+    margin: 2px 0;
+    font-size: 0.97rem;
+    color: #1f2937;
+    /* gray-800 */
+}
+
+/* Labels */
 .status-strong {
+    display: inline-block;
+    min-width: 90px;
     font-weight: 600;
+    color: #0f172a;
+    /* slate-900 */
 }
 
-/* Specific styles by status */
-
-.success {
-    /* border-left: 6px solid #4caf50; */
-    background: linear-gradient(135deg, #e6f4ea, #d3e9d3);
-    color: #2f5d32;
+/* ====== Status badges (for your existing Success/Failed text) ====== */
+.status-item p:last-child {
+    margin-top: 8px;
 }
 
-.failure {
-    border-left: 6px solid #f44336;
-    background: linear-gradient(135deg, #fcebea, #f9d6d5);
-    color: #721c24;
+/* Optional helpers if you add span.badge within Status text later */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+}
+
+.badge.success {
+    color: var(--success-ink);
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.badge.failed {
+    color: #7f1d1d;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* ====== Footer note ====== */
+.status-footer {
+    margin-top: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* ====== Utilities ====== */
+.hr {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.06);
+    margin: 18px 0;
+}
+
+/* Subtle fade-in */
+.status-inner,
+.status-item {
+    animation: fadeInUp 280ms ease both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

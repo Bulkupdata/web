@@ -7,22 +7,21 @@ import "aos/dist/aos.css";
 const instructions = [
   {
     icon: <FaPhoneAlt size={24} />,
-    title: "Enter Your Number",
-    shortDescription: "Input your valid phone number to start.",
+    title: "Enter Multiple Numbers",
     description:
-      "Ensure your phone number is exactly 11 digits and starts with a 0. For example, 08012345678. This is important so your data gets credited correctly.",
+      "Add the phone numbers you want to recharge (family, friends, staff, etc.). The system automatically detects each number’s network.",
   },
   {
     icon: <FaSignal size={24} />,
-    title: "Choose Network & Data Bundle",
+    title: "Select Bundles or Airtime",
     description:
-      "Select your mobile network provider (MTN, Airtel, Glo, or 9mobile). Then choose from available data bundles that fit your usage needs and budget.",
+      "For Airtime: Pick one amount for all numbers or set different amounts individually. For Data: Choose the best bundle for each number.",
   },
   {
     icon: <FaCreditCard size={24} />,
-    title: "Confirm & Purchase",
+    title: "Confirm & Send",
     description:
-      "Review your selected phone number, network, and data bundle carefully. Once confirmed, click 'Buy Data' to complete your purchase securely.",
+      "Review all numbers and bundles in one place. With a single transaction, everyone gets credited instantly.",
   },
 ];
 
@@ -34,11 +33,9 @@ const RechargeInstructions = () => {
   return (
     <section className="recharge-section" data-aos="zoom-out">
       <section className="recharge-section-div">
-        <h2 className="animated-header">How to Recharge Your Data</h2>
+        <h2 className="animated-header">How to Use BulkUp Feature</h2>
         <p className="page-description animated-description">
-          Follow these simple steps to quickly recharge your mobile data. Make
-          sure to enter your phone number correctly and choose the best data
-          bundle for your needs.
+          Follow these quick steps to send airtime or data to multiple numbers at once. BulkUp makes it fast, easy to use, and stress-free.
         </p>
       </section>
       <br />
@@ -50,12 +47,7 @@ const RechargeInstructions = () => {
             <div>
               <h3>{step.title}</h3>
               <br />
-              {i === 0 && (
-                <>
-                  <p>{step.description}</p>
-                </>
-              )}
-              {i !== 0 && <p>{step.description}</p>}
+              <p>{step.description}</p>
             </div>
           </div>
         ))}

@@ -1,88 +1,118 @@
 .payment-success-container {
-    max-width: 480px;
-    margin-top: 120px;
-    margin-left: 16px;
-    margin-right: 16px;
-    margin-bottom: 64px;
-    padding: 120px 12px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
-    text-align: center;
-    color: #333;
-    /* height: 60vh; */
-    min-height: 8vh;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* vertical centering */
-    align-items: center;
-    /* horizontal centering */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.loading,
-.error {
-    max-width: 400px;
-    margin: 320px auto;
-    padding: 1.5rem 1rem;
-    background-color: #fff8f8;
-    border-radius: 8px;
-    border: 1px solid #e03e3e;
-    color: #e03e3e;
-    font-weight: 600;
-    font-size: 1.1rem;
-    height: fit-content;
-
-    /* Optional: center content horizontally */
-    text-align: center;
+/* --- Shared Card Styles --- */
+.status-card {
+  width: 100%;
+  max-width: 480px;
+  background-color: #ffffff;
+  padding: 32px 24px;
+  border-radius: 12px;
+  text-align: left;
+  margin-top: 20px;
 }
 
-.success-title {
-    color: #28a745;
-    /* Bootstrap green */
-    font-size: 2.2rem;
-    margin-bottom: 0.4rem;
+.status-card h2 {
+  margin: 12px 0;
+  font-size: 1.6rem;
 }
 
-.thank-you {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: #555;
+.status-card p {
+  font-size: 1rem;
+  color: #888;
+  /* descriptions gray */
+  margin-top: 8px;
 }
 
-.payment-details p {
-    font-size: 1.1rem;
-    margin: 0.6rem 0;
-    color: #444;
+/* Payment successful note inside recharge failed */
+.payment-success-note {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-.payment-details strong {
-    color: #222;
+.green-text {
+  color: #28a745;
+  font-weight: bold;
 }
 
+/* --- Loading State --- */
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Success State --- */
+.payment-success {
+  border-left: 6px solid #28a745;
+}
+
+.payment-success h2 {
+  color: #28a745;
+}
+
+/* --- Warning / Recharge Failed --- */
+.payment-warning {
+  border-left: 9px solid #ff0000;
+  border-radius: 0px 24px 24px 0px;
+}
+
+.payment-warning h2 {
+  color: #ff0000;
+}
+
+/* --- Error State --- */
 .payment-error {
-    text-align: center;
-    padding: 2rem;
-    background-color: #fff0f0;
-    color: #c0392b;
-    border: 1px solid #e74c3c;
-    border-radius: 10px;
-    margin: 2rem;
+  border-left: 6px solid #ff0000;
+}
+
+.payment-error h2 {
+  color: #ff0000;
+}
+
+/* --- Pending State --- */
+.payment-pending {
+  border-left: 6px solid #17a2b8;
+}
+
+.payment-pending h2 {
+  color: #17a2b8;
 }
 
 .retry-button {
-    margin-top: 1rem;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 0.7rem 1.5rem;
-    font-size: 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.retry-button:hover {
-    background-color: #c0392b;
+  margin-top: 56px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  max-width: 550px;
 }

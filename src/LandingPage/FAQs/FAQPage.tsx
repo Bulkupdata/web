@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./FAQPage.css";
-import AddIcon from "../../Components/Icons/AddIcon";
+import { FaQuestionCircle } from "react-icons/fa";
 
 interface FAQItem {
   question: string;
@@ -18,26 +18,47 @@ const FAQPage: React.FC = () => {
     {
       question: "What is BulkUpData?",
       answer:
-        "BulkUpData is a smart data-sharing platform that allows users to save on mobile data by pooling resources to purchase bulk bundles at lower rates.",
+        "BulkUpData is a smart data platform that allows you to purchase affordable mobile data plans directly through our system at discounted rates.",
     },
     {
-      question: "How do I get data?",
+      question: "How do I purchase data?",
       answer:
-        "Simply sign up, join a group pool, or go solo—then choose a plan and receive your data instantly.",
+        "Simply sign up, log in, choose your preferred data plan, and complete payment. Your data will be delivered instantly.",
     },
     {
-      question: "Is there a subscription fee?",
-      answer: "No. You only pay when you buy a data plan.",
-    },
-    {
-      question: "How fast will I receive my data?",
+      question: "Is there a subscription or membership fee?",
       answer:
-        "Instantly. Once payment is confirmed, your data is delivered without delay.",
+        "No. There are no hidden fees or subscriptions—you only pay for the data plans you purchase.",
     },
     {
-      question: "Can I buy data alone without a group?",
+      question: "How quickly will I receive my data?",
       answer:
-        "Yes. You can purchase data individually and still enjoy discounted rates.",
+        "Your data is delivered instantly once your payment is confirmed. In rare cases, delivery may take a few minutes due to network delays.",
+    },
+    {
+      question: "Which networks are supported?",
+      answer:
+        "BulkUpData currently supports all major mobile networks in Nigeria, including MTN, Airtel, Glo, and 9Mobile.",
+    },
+    {
+      question: "What payment methods are accepted?",
+      answer:
+        "We accept multiple payment options including bank transfer, debit/credit cards, and secure online payment gateways.",
+    },
+    {
+      question: "Can I buy data for someone else?",
+      answer:
+        "Yes. You can enter any valid mobile number while purchasing and the data will be delivered directly to that recipient.",
+    },
+    {
+      question: "Is my personal information safe?",
+      answer:
+        "Absolutely. We use secure encryption and industry best practices to ensure your personal and payment information is fully protected.",
+    },
+    {
+      question: "What should I do if I don’t receive my data?",
+      answer:
+        "If your data does not arrive within a few minutes, please contact our support team with your transaction details, and we will resolve it promptly.",
     },
   ];
 
@@ -47,8 +68,8 @@ const FAQPage: React.FC = () => {
         <br /> <br /> <br />
         <h1 className="faq-header">Frequently Asked Questions</h1>
         <p className="faq-subtext">
-          Got questions about BulkUpData? We’ve answered the most common ones
-          here.
+          Have questions about BulkUpData? Here are answers to the most common
+          ones.
         </p>
         {faqItems.map((faq, index) => (
           <div
@@ -64,8 +85,7 @@ const FAQPage: React.FC = () => {
               <span
                 style={{
                   marginLeft: 12,
-                  backgroundColor: "#023009",
-                  border: "1px solid #023009",
+            
                   borderRadius: "50%",
                   padding: 6,
                   display: "flex",
@@ -73,7 +93,7 @@ const FAQPage: React.FC = () => {
                   justifyContent: "center",
                 }}
               >
-                <AddIcon width={16} height={16} color="#FFD000" />
+                <FaQuestionCircle size={16} color="#000" />
               </span>
             </div>
 

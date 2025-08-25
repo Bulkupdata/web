@@ -1,0 +1,28 @@
+.live-chat-btn {
+    position: fixed;
+    bottom: 48px;
+    right: 16px;
+    background-color: #000;
+    color: #ffdb1b;
+    padding: 16px 20px;
+    border: 4px solid #ffdb1b45;
+    border-radius: 400px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 16px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease-in-out;
+    z-index: 9999;
+}
+
+.live-chat-btn:hover {
+    transform: scale(1.05);
+}
+
+.chat-icon {
+    font-size: 20px;
+    color: #ffdb1b;
+}

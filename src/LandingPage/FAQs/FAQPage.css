@@ -1,14 +1,14 @@
-/* Container styles */
+/* Container */
 .faq-container {
     padding: 70px 20px;
     max-width: 800px;
     margin: auto;
     color: #121212;
     background-color: #ffffff;
-}
-
-/* Header styles */
-.faq-header {
+  }
+  
+  /* Header */
+  .faq-header {
     font-size: 2.48rem;
     font-weight: bold;
     margin-bottom: 1rem;
@@ -19,11 +19,10 @@
     margin-left: auto;
     margin-right: auto;
     font-family: var(--secondary-font);
-
-}
-
-/* Subtext styles */
-.faq-subtext {
+  }
+  
+  /* Subtext */
+  .faq-subtext {
     font-size: 1rem;
     line-height: 1.6;
     margin-bottom: 2rem;
@@ -32,53 +31,67 @@
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-}
-
-/* FAQ item styles */
-.faq-item {
-    border: 1px solid #66666645;
-    /* Adjust opacity */
+  }
+  
+  /* Item */
+  .faq-item {
+    border: 0.5px solid #000; /* Black border */
     border-radius: 12px;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     padding: 15px;
     transition: box-shadow 0.3s ease, background-color 0.3s ease;
     background-color: transparent;
-}
-
-
-
-
-/* Question container styles */
-.faq-question {
+  }
+  
+  .faq-item.active {
+    border: 2px solid #000; /* Yellow border when active */
+    background-color: #FFD000; /* Light yellow bg */
+  }
+  
+  /* Question Row */
+  .faq-question {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
     gap: 12px;
     color: #121212;
-}
-
-/* Question title styles */
-.faq-title {
+    cursor: pointer;
+  }
+  
+  /* Question Text */
+  .faq-title {
     margin: 0;
     font-size: 18px;
     color: #121212;
-}
-
-/* Answer styles */
-.faq-answer {
+  }
+  
+  /* Answer */
+  .faq-answer {
     margin-top: 10px;
-    color: #666;
+    color: #444;
     line-height: 1.5;
     font-size: 16px;
-}
-
-/* Active FAQ styles */
-/* .faq-item.active {
-        border: 1px solid var(--accent-color);
-    
-} */
+  }
+  
+  /* Icon Wrapper */
+  .faq-icon-wrapper {
+    margin-left: 12px;
+    background-color: #000;
+    border: 2px solid #000;
+    border-radius: 50%;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.2s;
+  }
+  
+  .faq-item.active .faq-icon-wrapper {
+    background-color: #FFD000;
+    border-color: #000;
+    transform: rotate(45deg); /* Turn + into × when open */
+  }
+  
+  .faq-item.active .faq-icon-wrapper svg {
+    stroke: #000; /* black icon when active */
+  }

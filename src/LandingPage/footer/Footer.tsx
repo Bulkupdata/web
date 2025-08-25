@@ -13,12 +13,10 @@ const Footer = () => {
           <h3 className="bulkupdata-footer-title">Contact Us</h3>
           <div className="bulkupdata-footer-contact">
             <p>
-              <a href="mailto:admin@bulkupdata.com">Admin@bulkupdata.com</a>
+              <a href="mailto:admin@bulkupdata.com">bulkupdata@gmail.com</a>
             </p>
           </div>
         </div>
-
-
 
         <div className="bulkupdata-footer-links-wrapper">
           <ul className="bulkupdata-footer-links">
@@ -28,11 +26,18 @@ const Footer = () => {
             <li>
               <a href="/terms-and-conditions">Terms & Conditions</a>
             </li>
+            <li>
+              <a href="/faqs">FAQs</a>
+            </li>
+            <li>
+              <a href="/feedback">Feedback</a>
+            </li>
+       
           </ul>
         </div>
 
-                {/* Socials Section */}
-                <div className="bulkupdata-footer-section">
+        {/* Socials Section */}
+        <div className="bulkupdata-footer-section">
           <h3 className="bulkupdata-footer-title">Follow Us</h3>
           <div className="bulkupdata-footer-socials">
             <a
@@ -69,12 +74,11 @@ const Footer = () => {
             </a>
           </div>
         </div>
-
-        
       </div>
 
       <div className="bulkupdata-footer-bottom">
-        &copy; {new Date().getFullYear()} BulkUpData. All rights reserved.
+        {/* &copy; {new Date().getFullYear()} */}© 2025 BulkUpData. An
+        innovation from Lukas Design Lab. All rights reserved.
       </div>
     </footer>
   );

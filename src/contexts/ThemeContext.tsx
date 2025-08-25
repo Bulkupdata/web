@@ -31,33 +31,35 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [selectedProvider, setSelectedProvider] = useState("MTN");
 
   const getTheme = (provider: string): Theme => {
-    switch (provider) {
-      case "MTN":
+    const normalized = provider.toLowerCase();
+  
+    switch (normalized) {
+      case "mtn":
         return {
           backgroundColor: "#FFD000",
           textColor: "#000",
           trayBackground: "#FFD000",
           trayTextColor: "#000",
         };
-      case "Airtel":
+      case "airtel":
         return {
           backgroundColor: "#E60000",
           textColor: "#fff",
           trayBackground: "#fff",
           trayTextColor: "#000",
         };
-      case "Glo":
+      case "glo":
         return {
           backgroundColor: "#2B720C",
           textColor: "#fff",
           trayBackground: "#2B720C",
           trayTextColor: "#fff",
         };
-      case "9mobile":
+      case "t2":
         return {
-          backgroundColor: "#123204",
+          backgroundColor: "#EF3C0C",
           textColor: "#fff",
-          trayBackground: "#123204",
+          trayBackground: "#000",
           trayTextColor: "#fff",
         };
       default:

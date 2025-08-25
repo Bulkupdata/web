@@ -1,4 +1,4 @@
-
+import { v4 as uuidv4 } from 'uuid';
 
 export const networks = [
     { id: "mtn", name: "MTN", nickname: 'nickname', logoUrls: 'logoUrls' },
@@ -8,34 +8,858 @@ export const networks = [
 ];
 
 export const dataBundles = [
-    { network: "Airtel", size: "500MB", fixedPrice: 99.93, price: 100, validity: "30 days" },
-    { network: "Airtel", size: "1GB", fixedPrice: 199.92, price: 200, validity: "30 days" },
-    { network: "Airtel", size: "1.5GB", fixedPrice: 299.93, price: 300, validity: "30 days" },
-    { network: "Airtel", size: "2.5GB", fixedPrice: 499.95, price: 500, validity: "30 days" },
-    { network: "Airtel", size: "5GB", fixedPrice: 999.94, price: 1000, validity: "30 days" },
-    { network: "Airtel", size: "7.5GB", fixedPrice: 1499.94, price: 1500, validity: "30 days" },
-    { network: "Airtel", size: "10GB", fixedPrice: 1999.92, price: 2000, validity: "30 days" },
-    { network: "Airtel", size: "25GB", fixedPrice: 4999.93, price: 5000, validity: "30 days" },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "1GB",
+        retailDataAmount: "1GB",
+        planAmount: 499.91,
+        budPrice: 495,
+        retailPrice: 500,
+        planType: "daily",
+        description: "This Data plan gives 1GB for 1 Day",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "1.5GB",
+        retailDataAmount: "1.5GB",
+        planAmount: 599.91,
+        budPrice: 595,
+        retailPrice: 600,
+        planType: "2 Days",
+        description: "This Data plan gives 1.5GB for 2 days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "1GB",
+        retailDataAmount: "1GB",
+        planAmount: 799.92,
+        budPrice: 795,
+        retailPrice: 800,
+        planType: "weekly",
+        description: "1GB - 7 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "1.5GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "1.5GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 999.92,
+        budPrice: 995,
+        retailPrice: 1000,
+        planType: "weekly",
+        description: "1.5GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 7 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "3.5GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "3.5GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 1499.92,
+        budPrice: 1495,
+        retailPrice: 1500,
+        planType: "weekly",
+        description: "3.5GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 7 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "3GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "3GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 1999.92,
+        budPrice: 1995,
+        retailPrice: 2000,
+        planType: "30 days",
+        description: "3GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "4GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "4GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 2499.2,
+        budPrice: 2495,
+        retailPrice: 2500,
+        planType: "30 days",
+        description: "4GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "8GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "8GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 2999.92,
+        budPrice: 2995,
+        retailPrice: 3000,
+        planType: "30 days",
+        description: "8GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "10GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "10GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 3999.91,
+        budPrice: 3995,
+        retailPrice: 4000,
+        planType: "30 days",
+        description: "10GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "13GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "13GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 4999.92,
+        budPrice: 4980,
+        retailPrice: 5000,
+        planType: "monthly",
+        description: "13GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "18GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "18GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 5999.91,
+        budPrice: 5980,
+        retailPrice: 6000,
+        planType: "30 days",
+        description: "18GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "25GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "25GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 7999.91,
+        budPrice: 7970,
+        retailPrice: 8000,
+        planType: "30 days",
+        description: "25GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "35GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "35GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 9999.91,
+        budPrice: 9950,
+        retailPrice: 10000,
+        planType: "30 days",
+        description: "35GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "60GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "60GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 14999.91,
+        budPrice: 14975,
+        retailPrice: null, // Value not provided
+        planType: "30 days",
+        description: "60GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "100GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        retailDataAmount: "100GB + 2GB YouTube Night + 200MB (YT, IG & TikTok)",
+        planAmount: 19999.92,
+        budPrice: 19800,
+        retailPrice: 20000,
+        planType: "30 days",
+        description: "100GB + 2GB YouTube Night + 200MB (YT, IG & TikTok) - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "160GB",
+        retailDataAmount: "160GB",
+        planAmount: 29999.91,
+        budPrice: 29750,
+        retailPrice: 30000,
+        planType: "30 days",
+        description: "160GB - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "210GB",
+        retailDataAmount: "210GB",
+        planAmount: 39999.91,
+        budPrice: 39600,
+        retailPrice: 40000,
+        planType: "30 days",
+        description: "210GB - 30 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "300GB",
+        retailDataAmount: "300GB",
+        planAmount: 49999.91,
+        budPrice: 49750,
+        retailPrice: 50000,
+        planType: "90 days",
+        description: "300GB - 90 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "350GB",
+        retailDataAmount: "350GB",
+        planAmount: 59999.91,
+        budPrice: 59400,
+        retailPrice: 60000,
+        planType: "90 days",
+        description: "350GB - 120 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "Airtel",
+        budDataAmount: "650GB",
+        retailDataAmount: "650GB",
+        planAmount: 99999.91,
+        budPrice: 99500,
+        retailPrice: 100000,
+        planType: "365 days",
+        description: "650GB - 365 Days",
+        operatorId: 646
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "2.5GB",
+        retailDataAmount: "2.5GB",
+        planAmount: 900,
+        budPrice: 885,
+        retailPrice: 900,
+        planType: "2 Days",
+        description: "2.5GB 2-Day Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "3.2GB",
+        retailDataAmount: "3.2GB",
+        planAmount: 1000,
+        budPrice: 990,
+        retailPrice: 1000,
+        planType: "2 Days",
+        description: "3.2GB 2-Day Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "2GB + 2mins",
+        retailDataAmount: "2GB",
+        planAmount: 1500,
+        budPrice: 1490,
+        retailPrice: 1500,
+        planType: "2 Days",
+        description: "2GB monthly",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "2.7GB + 5mins",
+        retailDataAmount: "2.7GB",
+        planAmount: 2000,
+        budPrice: 1990,
+        retailPrice: 2000,
+        planType: "monthly",
+        description: "2.7GB monthly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "11GB weekly plan",
+        retailDataAmount: "11GB",
+        planAmount: 3500,
+        budPrice: 3490,
+        retailPrice: 3500,
+        planType: "7 days",
+        description: "11GB weekly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "20GB weekly plan",
+        retailDataAmount: "20GB",
+        planAmount: 5000,
+        budPrice: 4950,
+        retailPrice: 5000,
+        planType: "7 days",
+        description: "20GB weekly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "10GB + 10mins",
+        retailDataAmount: "10GB + 10mins",
+        planAmount: 4500,
+        budPrice: 4490,
+        retailPrice: 4500,
+        planType: "30 days",
+        description: "10GB + 10mins",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "12.5GB Monthly Plan",
+        retailDataAmount: "12.5GB Monthly Plan",
+        planAmount: 5500,
+        budPrice: 5490,
+        retailPrice: 5500,
+        planType: "30 days",
+        description: "12.5GB Monthly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "16.5GB + 10mins",
+        retailDataAmount: "16.5GB + 10mins",
+        planAmount: 6500,
+        budPrice: 6490,
+        retailPrice: 6500,
+        planType: "30 days",
+        description: "16.5GB + 10mins",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "20GB Monthly Plan",
+        retailDataAmount: "20GB Monthly Plan",
+        planAmount: 7500,
+        budPrice: 7490,
+        retailPrice: 7500,
+        planType: "30 days",
+        description: "20GB Monthly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "25GB SME Monthly Plan",
+        retailDataAmount: "25GB SME Monthly Plan",
+        planAmount: 9000,
+        budPrice: 8900,
+        retailPrice: 9000,
+        planType: "30 days",
+        description: "25GB SME Monthly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "20GB + 4GB YouTube Night + 300MB YouTube Music + 25mins..",
+        retailDataAmount: "20GB",
+        planAmount: 5500,
+        budPrice: 6900,
+        retailPrice: 7500,
+        planType: "30 days",
+        description: "20GB Monthly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "36GB Monthly Plan + 40mins 30days.",
+        retailDataAmount: "36GB",
+        planAmount: 11000,
+        budPrice: 10900,
+        retailPrice: 11000,
+        planType: "30 days",
+        description: "36GB Monthly Plan + 40mins 30days",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "75GB Monthly Plan",
+        retailDataAmount: "75GB Monthly Plan",
+        planAmount: 18000,
+        budPrice: 17900,
+        retailPrice: 18000,
+        planType: "30 days",
+        description: "75GB Monthly Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "165GB Monthly Plan",
+        retailDataAmount: "165GB Monthly Plan",
+        planAmount: 35000,
+        budPrice: 34800,
+        retailPrice: 35000,
+        planType: "30 days",
+        description: "165GB Monthly Plan + 40mins",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "150GB 2-Month Plan",
+        retailDataAmount: "150GB 2-Month Plan",
+        planAmount: 40000,
+        budPrice: 39800,
+        retailPrice: 40000,
+        planType: "30 days",
+        description: "150GB 2-Month Plan",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "150GB monthy plan",
+        retailDataAmount: "150GB",
+        planAmount: 30000,
+        budPrice: 29900,
+        retailPrice: 30000,
+        planType: "30 days",
+        description: "150GB + 2GB daily upon exhausting main bundle 30 Days",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "200GB monthy plan",
+        retailDataAmount: "200GB",
+        planAmount: 37500,
+        budPrice: 37375,
+        retailPrice: 37500,
+        planType: "30 days",
+        description: "200GB + 5GB Youtube/MSTeams/Zoom",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "260GB 2-Month Plan",
+        retailDataAmount: "260GB 2-Month Plan",
+        planAmount: 45000,
+        budPrice: 44800,
+        retailPrice: 45000,
+        planType: "30 days",
+        description: "260GB + 2GB daily upon exhausting main bundle",
+        operatorId: 345
+    },
+    {
+        id: uuidv4(),
+        network: "MTN",
+        budDataAmount: "1.5TB Yearly",
+        retailDataAmount: "1.5TB Yearly",
+        planAmount: 225000,
+        budPrice: 223250,
+        retailPrice: 223350,
+        planType: "365 days",
+        description: "1.5TB Yearly",
+        operatorId: 345
+    },
 
-    { network: "MTN", size: "2.5GB", fixedPrice: 500, price: 500, validity: "30 days" },
-    { network: "MTN", size: "7.5GB", fixedPrice: 1500, price: 1500, validity: "30 days" },
-    { network: "MTN", size: "15GB", fixedPrice: 3000, price: 3000, validity: "30 days" },
-    { network: "MTN", size: "30GB", fixedPrice: 5500, price: 5500, validity: "30 days" },
+    // 9Mobile Plans
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "1GB",
+        retailDataAmount: "1GB",
+        planAmount: 300,
+        budPrice: 295,
+        retailPrice: 300,
+        planType: "daily",
+        description: "1GB validity 24 hours",
+        operatorId: 645
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "2GB",
+        retailDataAmount: "2GB",
+        planAmount: 500,
+        budPrice: 495,
+        retailPrice: 500,
+        planType: "daily",
+        description: "2GB validity 3 days",
+        operatorId: 645
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "7GB",
+        retailDataAmount: "7GB",
+        planAmount: 1500,
+        budPrice: 1490,
+        retailPrice: 1500,
+        planType: "daily",
+        description: "7GB validity 7 days",
+        operatorId: 645
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "12GB",
+        retailDataAmount: "12GB",
+        planAmount: 2500,
+        budPrice: 2800, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 3000,
+        planType: "30 days",
+        description: "12GB validity 30 days",
+        operatorId: 645
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "18.6GB",
+        retailDataAmount: "18.5GB",
+        planAmount: 4000,
+        budPrice: 3900,
+        retailPrice: 4000,
+        planType: "30 days",
+        description: "18.6GB validity 30 days",
+        operatorId: 645
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "24GB",
+        retailDataAmount: "24GB",
+        planAmount: 5000,
+        budPrice: 4900,
+        retailPrice: 5000,
+        planType: "30 days",
+        description: "24GB validity 30 days",
+        operatorId: 645
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "50GB",
+        retailDataAmount: "50GB",
+        planAmount: 10000,
+        budPrice: 9900,
+        retailPrice: 10000,
+        planType: "30 days",
+        description: "50GB validity 180 days",
+        operatorId: 645
+    },
+    // BUD Exclusive for 9Mobile
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "80GB",
+        retailDataAmount: "Not listed! BUD EXCLUSIVE",
+        planAmount: 15000,
+        budPrice: 14900,
+        retailPrice: null,
+        planType: "30 days",
+        description: "80GB validity 30 days",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "15GB",
+        retailDataAmount: "Not listed! BUD EXCLUSIVE",
+        planAmount: 3000,
+        budPrice: 3400, // Note: This BUD price is higher than Plan Amount
+        retailPrice: null,
+        planType: "30 days",
+        description: "15GB validity 30 days",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "6.2GB",
+        retailDataAmount: "Not listed! BUD EXCLUSIVE",
+        planAmount: 1200,
+        budPrice: 1299, // Note: This BUD price is higher than Plan Amount
+        retailPrice: null,
+        planType: "30 days",
+        description: "6.2GB validity 30 days",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "35GB",
+        retailDataAmount: "Not listed! BUD EXCLUSIVE",
+        planAmount: 7000,
+        budPrice: 6950,
+        retailPrice: null,
+        planType: "30 days",
+        description: "35GB validity 30 days",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "9mobile",
+        budDataAmount: "9.2GB",
+        retailDataAmount: "Not listed! BUD EXCLUSIVE",
+        planAmount: 2000,
+        budPrice: 1995,
+        retailPrice: null,
+        planType: "30 days",
+        description: "9.2GB validity 30 days",
+        operatorId: 647
+    },
+
+    // Glo Plans
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "1.8GB",
+        retailDataAmount: "1.8GB",
+        planAmount: 500,
+        budPrice: 600, // Note: This BUD price is higher than Plan Amount
+        retailPrice: null,
+        planType: "unknown",
+        description: "N 500 1.8GB (14 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "7.5GB",
+        retailDataAmount: "7.25GB",
+        planAmount: 1500,
+        budPrice: 1999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 2500,
+        planType: "30 days",
+        description: "N 1999 7.5GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "10.8GB",
+        retailDataAmount: "10GB",
+        planAmount: 2500,
+        budPrice: 2799, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 3000,
+        planType: "30 days",
+        description: "N 2799 10GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "14GB",
+        retailDataAmount: "12.5GB",
+        planAmount: 4000,
+        budPrice: 3999,
+        retailPrice: 4000,
+        planType: "30 days",
+        description: "N 3999 14GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "18GB",
+        retailDataAmount: "16GB",
+        planAmount: 4000,
+        budPrice: 4999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 5000,
+        planType: "30 days",
+        description: "N 4999 18GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "24GB",
+        retailDataAmount: "26GB",
+        planAmount: 5000,
+        budPrice: 6499, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 8000,
+        planType: "30 days",
+        description: "N 6499 10GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "29.5GB",
+        retailDataAmount: "26GB",
+        planAmount: 8000,
+        budPrice: 8800, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 8000,
+        planType: "30 days",
+        description: "N 8800 29GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "50GB",
+        retailDataAmount: "38GB",
+        planAmount: 10000,
+        budPrice: 12999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 10000,
+        planType: "30 days",
+        description: "N 12999 50GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "93GB",
+        retailDataAmount: "64GB",
+        planAmount: 15000,
+        budPrice: 16999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 15000,
+        planType: "30 days",
+        description: "N 16999 50GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "119GB",
+        retailDataAmount: "107GB",
+        planAmount: 18000,
+        budPrice: 19999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 20000,
+        planType: "30 days",
+        description: "N 19999 119GB (30 days)",
+        operatorId: 647
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "110GB Monthly Plan 105GB + 5GB Night",
+        retailDataAmount: "not listed BUD EXCLUSIVE",
+        planAmount: 20000,
+        budPrice: 21999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: null,
+        planType: "30 days",
+        description: "N 21999 110GB Monthly Plan 105GB + 5GB Night(30 days)",
+        operatorId: 647
+    },
+    // BUD Exclusive for Glo
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "225GB",
+        retailDataAmount: "220GB",
+        planAmount: 30000,
+        budPrice: 37999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 40000,
+        planType: "30 days",
+        description: "N 37999 BUD EXCLUSIVE 225GB (30 days)",
+        operatorId: 931
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "300GB",
+        retailDataAmount: "310GB",
+        planAmount: 36000,
+        budPrice: 44999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 50000,
+        planType: "30 days",
+        description: "N 44999 BUD EXCLUSIVE 225GB (30 days)",
+        operatorId: 931
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "425GB",
+        retailDataAmount: "355GB",
+        planAmount: 50000,
+        budPrice: 57999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 60000,
+        planType: "90 days",
+        description: "N 57999 BUD EXCLUSIVE 225GB (90 days)",
+        operatorId: 931
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "525GB",
+        retailDataAmount: "475GB",
+        planAmount: 60000,
+        budPrice: 72999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 75000,
+        planType: "120 days",
+        description: "N 72999 BUD EXCLUSIVE 525GB (120 days)",
+        operatorId: 931
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "675GB",
+        retailDataAmount: "not listed",
+        planAmount: 75000,
+        budPrice: 94999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: null,
+        planType: "120 days",
+        description: "N 94999 BUD EXCLUSIVE 225GB (30 days)",
+        operatorId: 931
+    },
+    {
+        id: uuidv4(),
+        network: "Glo",
+        budDataAmount: "1000GB",
+        retailDataAmount: "1000GB",
+        planAmount: 100000,
+        budPrice: 139999, // Note: This BUD price is higher than Plan Amount
+        retailPrice: 150000,
+        planType: "365 days",
+        description: "N 139,999 BUD EXCLUSIVE 225GB (30 days)",
+        operatorId: 931
+    },
+
 ];
 
 export const airtimeBundles = [
-    { amount: "₦100", price: 100, fixedPrice: 99.93 },
-    { amount: "₦200", price: 200, fixedPrice: 199.92 },
-    { amount: "₦300", price: 300, fixedPrice: 299.91 },
-    { amount: "₦500", price: 500, fixedPrice: 499.85 },
-    { amount: "₦750", price: 750, fixedPrice: 749.80 },
-    { amount: "₦1,000", price: 1000, fixedPrice: 999.75 },
-    { amount: "₦1,500", price: 1500, fixedPrice: 1499.65 },
-    { amount: "₦2,000", price: 2000, fixedPrice: 1999.50 },
-    { amount: "₦5,000", price: 5000, fixedPrice: 4998.00 },
-    { amount: "₦10,000", price: 10000, fixedPrice: 9995.00 },
-    { amount: "₦20,000", price: 20000, fixedPrice: 19990.00 },
+    { id: 1, amount: "₦100", price: 100, fixedPrice: 99.93 },
+    { id: 2, amount: "₦200", price: 200, fixedPrice: 199.92 },
+    { id: 3, amount: "₦300", price: 300, fixedPrice: 299.91 },
+    { id: 4, amount: "₦500", price: 500, fixedPrice: 499.85 },
+    { id: 5, amount: "₦750", price: 750, fixedPrice: 749.80 },
+    { id: 6, amount: "₦1,000", price: 1000, fixedPrice: 999.75 },
+    { id: 7, amount: "₦1,500", price: 1500, fixedPrice: 1499.65 },
+    { id: 8, amount: "₦2,000", price: 2000, fixedPrice: 1999.50 },
+    { id: 9, amount: "₦5,000", price: 5000, fixedPrice: 4998.00 },
+    { id: 10, amount: "₦10,000", price: 10000, fixedPrice: 9995.00 },
+    { id: 11, amount: "₦20,000", price: 20000, fixedPrice: 19990.00 },
 ];
 
-
 export const categories = ["Daily", "Weekly", "Two Weeks", "Monthly", "60 Days"];
+
+
+

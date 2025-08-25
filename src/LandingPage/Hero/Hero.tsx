@@ -1,6 +1,5 @@
+import React, { useState, useEffect } from "react";
 import { useTheme } from "../../contexts/ThemeContext";
-
-import React, { useState } from "react";
 import "./Hero.css";
 import BuyDataModal from "../Modal/BuyDataModal";
 import { FaArrowRight } from "react-icons/fa";
@@ -8,7 +7,6 @@ import mtnImg from "../../assets/images/mtn.png";
 import airtelImg from "../../assets/images/airtel.jpeg";
 import gloImg from "../../assets/images/glo.png";
 import EtisalatImg from "../../assets/images/9mobile.png";
-import { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
@@ -16,11 +14,13 @@ const Hero: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const { selectedProvider, setSelectedProvider, theme } = useTheme();
 
-  const providers = ["MTN", "Airtel", "Glo", "9mobile"];
+  const providers = ["MTN", "Airtel", "Glo", "T2"];
 
   useEffect(() => {
     AOS.init({ duration: 600 });
   }, []);
+
+  const normalizedSelected = selectedProvider?.toLowerCase();
 
   return (
     <div>
@@ -41,9 +41,9 @@ const Hero: React.FC = () => {
               fontWeight: "600",
               color: "#fff",
               backgroundColor:
-                selectedProvider === "Airtel"
+                normalizedSelected === "airtel"
                   ? "#ffffff32"
-                  : selectedProvider === "MTN"
+                  : normalizedSelected === "mtn"
                   ? "#00000065"
                   : "#FFFFFF21",
               borderRadius: 400,
@@ -57,12 +57,16 @@ const Hero: React.FC = () => {
           </span>
 
           <h1 style={{ marginTop: 8 }} data-aos="zoom-out">
-            Get More Data, Pay Less with
+            Buy Data or Airtime for Everyone in One Go
+            {/* 
+            
             <span style={{ paddingLeft: 8 }}>
               <span style={{ color: theme.textColor }}>Bulk</span>
               <span style={{ color: theme.textColor }}>Up</span>
               <span style={{ color: theme.textColor }}>Data</span>
-            </span>
+            </span> 
+            
+            */}
           </h1>
 
           <p
@@ -70,9 +74,10 @@ const Hero: React.FC = () => {
             data-aos="zoom-out"
             className="hero-p"
           >
-            Say goodbye to overpriced data plans. Join a smart, affordable way
-            to access mobile data through shared bulk purchases. Instant.
-            Seamless. Cost-effective.
+            With BulkUpData, you can recharge dozens or even hundreds of numbers
+            at once. Our system automatically detects each user’s network,
+            allowing you to assign the right data or airtime per user — all at
+            prices lower than the usual rates
           </p>
 
           <h3
@@ -94,7 +99,7 @@ const Hero: React.FC = () => {
                 style={{
                   backgroundColor: "transparent",
                   border:
-                    selectedProvider === provider
+                    normalizedSelected === provider.toLowerCase()
                       ? provider === "MTN"
                         ? "2px solid #000"
                         : "1px solid #fff"
@@ -102,7 +107,6 @@ const Hero: React.FC = () => {
                   borderRadius: "48px",
                   padding: `20px 7px`,
                   width: "fit-content",
-
                 }}
               >
                 <span
@@ -113,7 +117,6 @@ const Hero: React.FC = () => {
                     padding: "0.9rem 1rem",
                     fontWeight: "600",
                     borderRadius: "24px",
-        
                   }}
                 >
                   {provider}
@@ -130,26 +133,27 @@ const Hero: React.FC = () => {
               overflow: "hidden",
               transition: "max-height 0.5s ease-in-out, padding 0.5s",
               backgroundColor:
-                selectedProvider === "MTN"
+                normalizedSelected === "mtn"
                   ? "#000"
-                  : selectedProvider === "Airtel"
+                  : normalizedSelected === "airtel"
                   ? "#121212"
                   : "#ffffff",
               color:
-                selectedProvider === "Glo" || selectedProvider === "9mobile"
+                normalizedSelected === "glo" || normalizedSelected === "t2"
                   ? "#000"
                   : "#fff",
               marginTop: "2rem",
               padding: selectedProvider ? "16px" : "0",
               borderRadius: "12px",
-              width: "100%", // ✅ ensures full width
-              boxSizing: "border-box", // ✅ avo
+              width: "100%",
+              boxSizing: "border-box",
             }}
           >
             {(() => {
               const bundles = [
                 {
                   network: "MTN",
+                  header: "MTN",
                   size: "5GB",
                   price: "₦300",
                   validity: "7 Days",
@@ -159,6 +163,7 @@ const Hero: React.FC = () => {
                 },
                 {
                   network: "Airtel",
+                  header: "Airtel",
                   size: "10GB",
                   price: "₦300",
                   validity: "30 Days",
@@ -168,6 +173,7 @@ const Hero: React.FC = () => {
                 },
                 {
                   network: "Glo",
+                  header: "Glo",
                   size: "10GB",
                   price: "₦300",
                   validity: "30 Days",
@@ -176,19 +182,19 @@ const Hero: React.FC = () => {
                     "Glo stands out for its affordable data bundles and frequent promotional offers, such as unlimited night browsing and weekend data bonuses. It is recognized for its strong urban coverage and appealing data plan packages for heavy internet users. Glo also offers innovative services like the Glo Cafè Wi-Fi hotspots.",
                 },
                 {
-                  network: "9mobile",
+                  network: "T2",
+                  header: `T2`,
                   size: "10GB",
                   price: "₦300",
                   validity: "30 Days",
                   image: EtisalatImg,
-                  description:
-                    "9mobile, formerly Etisalat Nigeria, is known for quality customer support and value-packed data bundles. Their offerings include daily, weekly, and monthly data plans with competitive prices and attractive bonuses. 9mobile also provides innovative data options such as weekend data and social media packages.",
+                  description: `T2 is Nigeria’s reimagined telecom brand, built for speed, creativity, and wider coverage. With flexible daily, weekly, and monthly bundles, plus social and weekend data options, T2 makes staying connected simple and affordable. The full rebrand will roll out once the parent company’s transition is complete.`,
                 },
               ];
 
               const selected = bundles.find(
                 (b) =>
-                  b.network.toLowerCase() === selectedProvider.toLowerCase()
+                  b.network.toLowerCase() === selectedProvider?.toLowerCase()
               );
 
               if (!selected) return null;
@@ -213,7 +219,7 @@ const Hero: React.FC = () => {
                     }}
                   />
                   <div>
-                    <p className="hero-content-tray-p" style={{}}>
+                    <p className="hero-content-tray-p">
                       {selected.description}
                     </p>
                     <p
@@ -242,12 +248,6 @@ const Hero: React.FC = () => {
                     >
                       Buy Now
                     </button>
-                    {/* <p style={{ margin: 0, fontWeight: 500 }}>
-                      Validity: {selected.validity}
-                    </p>
-                    <p style={{ marginTop: "0.5rem", fontStyle: "italic" }}>
-                      Enjoy affordable bulk data rates with {selected.network}.
-                    </p> */}
                   </div>
                 </div>
               );
