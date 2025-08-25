@@ -1,6 +1,6 @@
 .bulk-page-container {
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 2rem 16px;
     margin-top: 160px;
     padding: 16px;
     background-color: #fffbe6;
@@ -466,4 +466,76 @@ textarea:focus {
     font-size: 12px;
     color: #6b7280;
     /* muted gray */
+}
+
+@media (max-width: 600px) {
+
+    .selected-bundle-summary {
+        font-size: 12px
+    }
+
+    .network-name-detected {
+        font-size: 12px
+    }
+
+    .network-number-detected {
+        font-size: 16px
+    }
+
+    .expand-icon {
+        size: 16
+    }
+
+    .success-icon {
+        display: none;
+    }
+
+    .bundle-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+    }
+
+    .bundle-option {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1rem 12px;
+        border-radius: 8px;
+        background-color: #f4f4f4;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        gap: 12px;
+    }
+
+    .bundle-option.selected {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+    }
+
+    .bundle-option.selected h4,
+    .bundle-option.selected p {
+        color: #fff;
+
+    }
+
+    .bundle-option h4 {
+
+        margin: 0 0 0.5rem 0;
+        color: #333;
+    }
+
+    .bundle-option p {
+  
+        margin: 0;
+        color: #6c757d;
+    }
+
+
+
 }

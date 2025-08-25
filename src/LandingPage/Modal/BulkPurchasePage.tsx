@@ -372,11 +372,11 @@ const BulkPaymentPage: React.FC = () => {
       <div
         style={{
           color: "#fff",
-          fontSize: 16,
+          fontSize: 14,
           fontWeight: 700,
           backgroundColor: "#ff0000",
-          padding: `12px 24px`,
-          borderRadius: 24,
+          padding: `12px 12px`,
+          borderRadius: 12,
           marginBottom: 32,
           marginTop: -12,
         }}

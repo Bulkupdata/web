@@ -263,7 +263,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
             >
               Send OTP
             </button>
-            <p className="auth-switch-text">
+            {/* <p className="auth-switch-text">
               Need to create an admin account?{" "}
               <span
                 onClick={() => setCurrentView("createAdmin")}
@@ -271,7 +271,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({
               >
                 Create Admin
               </span>
-            </p>
+            </p> */}
           </form>
         )}
 
