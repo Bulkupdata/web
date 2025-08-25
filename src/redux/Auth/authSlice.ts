@@ -121,7 +121,7 @@ const authSlice = createSlice({
             })
 
             // Resend OTP
-            .addCase(resendOtp.fulfilled, (state, action) => {
+            .addCase(resendOtp.fulfilled, () => {
                 // state.message = action.payload.message;
                 // console.log('resendOtp.fulfilled: State updated:', state);
                 // console.log('resendOtp.fulfilled: Action Payload:', action.payload);
@@ -133,7 +133,7 @@ const authSlice = createSlice({
             })
 
             // Verify OTP
-            .addCase(verifyOtp.fulfilled, (state, action) => {
+            .addCase(verifyOtp.fulfilled, () => {
                // state.token = action.payload.token;
                 //state.message = action.payload.message;
                // localStorage.setItem('token', action.payload.token);

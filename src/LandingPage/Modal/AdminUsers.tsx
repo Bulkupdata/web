@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../store";
+
 import { fetchUsersForAdmin } from "../../redux/Reloadly/adminSlice";
 import "./AdminUsers.css";
 import SpinnerLoader from "../../Components/SpinnerLoader/SpinnerLoader";
+import { AppDispatch } from "../../redux/store";
 
 interface User {
   _id: string;
@@ -35,11 +36,11 @@ const AdminUsers: React.FC = () => {
     setLoading(true);
     dispatch(fetchUsersForAdmin())
       .unwrap()
-      .then((data) => {
+      .then((data: any) => {
         setUsers(data);
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: any) => {
         setError(err);
         setLoading(false);
       });
