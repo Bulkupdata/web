@@ -155,7 +155,7 @@ const Hero: React.FC = () => {
                   network: "MTN",
                   header: "MTN",
                   size: "5GB",
-                  price: "₦300",
+                  price: "₦885",
                   validity: "7 Days",
                   image: mtnImg,
                   description:
@@ -165,7 +165,7 @@ const Hero: React.FC = () => {
                   network: "Airtel",
                   header: "Airtel",
                   size: "10GB",
-                  price: "₦300",
+                  price: "₦885",
                   validity: "30 Days",
                   image: airtelImg,
                   description:
@@ -175,7 +175,7 @@ const Hero: React.FC = () => {
                   network: "Glo",
                   header: "Glo",
                   size: "10GB",
-                  price: "₦300",
+                  price: "₦885",
                   validity: "30 Days",
                   image: gloImg,
                   description:
@@ -185,7 +185,7 @@ const Hero: React.FC = () => {
                   network: "T2",
                   header: `T2`,
                   size: "10GB",
-                  price: "₦300",
+                  price: "₦885",
                   validity: "30 Days",
                   image: EtisalatImg,
                   description: `T2 is Nigeria’s reimagined telecom brand, built for speed, creativity, and wider coverage. With flexible daily, weekly, and monthly bundles, plus social and weekend data options, T2 makes staying connected simple and affordable. The full rebrand will roll out once the parent company’s transition is complete.`,

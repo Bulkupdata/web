@@ -12,8 +12,9 @@ import { useDispatch } from "react-redux";
 import { autoDetectOperatorGroup } from "../../redux/Reloadly/Index";
 import { AppDispatch } from "../../redux/store";
 import "./BulkPurchasePage.css";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import Papa from "papaparse";
+import BulkSummaryPage, { PurchaseItem } from "./BulkSummaryPage";
 
 interface Network {
   id: string;
@@ -31,6 +32,7 @@ interface DataBundle {
   operatorId: number;
   planType: string;
   logoUrls?: any;
+  isCustom?: boolean; // Added optional 'isCustom' property
 }
 
 interface AirtimeBundle {
@@ -41,10 +43,10 @@ interface AirtimeBundle {
   retailPrice?: any;
   logoUrls?: any;
   network?: any;
+  isCustom?: boolean; // Already exists
 }
 
 const categories = ["Daily", "Weekly", "Monthly", "90 days", "365 days"];
-const ITEM_PLATFORM_FEE = 950;
 
 const BulkPaymentPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -70,6 +72,11 @@ const BulkPaymentPage: React.FC = () => {
     useState<AirtimeBundle | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSamePrice, setIsSamePrice] = useState(false);
+  const [isServiceFeeExpanded, setIsServiceFeeExpanded] = useState(false);
+  const [customAmount, setCustomAmount] = useState<number | "">("");
+  const [customAmountError, setCustomAmountError] = useState<string | null>(
+    null
+  );
 
   const updateTotalPrice = (numbers: typeof detectedNumbers) => {
     const total = numbers.reduce((sum, current) => {
@@ -155,6 +162,24 @@ const BulkPaymentPage: React.FC = () => {
     setDetectedNumbers(updatedNumbers);
   };
 
+  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "") {
+      setCustomAmount("");
+      setCustomAmountError(null);
+      return;
+    }
+    const num = Number(value);
+    if (isNaN(num)) {
+      setCustomAmountError("Please enter a valid number.");
+    } else if (num < 50 || num > 200000) {
+      setCustomAmountError("Amount must be between ₦50 and ₦200,000.");
+    } else {
+      setCustomAmountError(null);
+    }
+    setCustomAmount(num);
+  };
+
   const handleCategorySelect = (numberId: string, category: string) => {
     setDetectedNumbers((prev) =>
       prev.map((item) => {
@@ -176,7 +201,44 @@ const BulkPaymentPage: React.FC = () => {
     );
   };
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+
+  const calculateFees = () => {
+    const successfulRecipients = detectedNumbers.filter(
+      (item) => item.selectedBundle
+    ).length;
+    const subtotal = totalPrice;
+
+    const processingFee = 499 * successfulRecipients;
+    const runFee = 50;
+    const vat = 0.075 * processingFee;
+    const totalBeforePaystack = subtotal + processingFee + runFee + vat;
+
+    let paystackFee = 0.015 * totalBeforePaystack;
+    if (paystackFee > 2000) {
+      paystackFee = 2000;
+    }
+
+    const serviceFee = processingFee + runFee + vat + paystackFee;
+    const grandTotal = subtotal + serviceFee;
+
+    return {
+      processingFee,
+      runFee,
+      vat,
+      paystackFee,
+      serviceFee,
+      grandTotal,
+    };
+  };
+
+  const [modalPurchaseList, setModalPurchaseList] = useState<PurchaseItem[]>(
+    []
+  );
+  const [modalSubtotal, setModalSubtotal] = useState(0);
+  const [modalServiceFee, setModalServiceFee] = useState(0);
+  const [modalGrandTotal, setModalGrandTotal] = useState(0);
 
   const handlePay = () => {
     const newList = detectedNumbers
@@ -188,13 +250,18 @@ const BulkPaymentPage: React.FC = () => {
         if (!selectedBundle) {
           return null;
         }
+
+        const amount = selectedBundle.isCustom
+          ? (selectedBundle as AirtimeBundle).price
+          : buyData
+          ? (selectedBundle as DataBundle).retailPrice
+          : (selectedBundle as AirtimeBundle).fixedPrice;
+
         return {
           logoUrls: item?.logoUrls,
           network: selectedBundle?.network,
           operatorId: item?.operatorId,
-          amount: buyData
-            ? (selectedBundle as DataBundle).retailPrice
-            : (selectedBundle as AirtimeBundle).fixedPrice,
+          amount,
           useLocalAmount: true,
           customIdentifier: customId,
           recipientEmail: "bulkupdata@gmail.com",
@@ -218,17 +285,23 @@ const BulkPaymentPage: React.FC = () => {
       return;
     }
 
-    const platformFee = newList.length * ITEM_PLATFORM_FEE;
-    const totalWithFee = totalPrice + platformFee;
+    const fees = calculateFees();
 
-    navigate("/bulk-summary", {
-      state: {
-        purchaseList: newList,
-        totalPrice: totalPrice,
-        platformFee: platformFee,
-        totalWithFee: totalWithFee,
-      },
-    });
+    setModalPurchaseList(newList as any);
+    setModalSubtotal(totalPrice);
+    setModalServiceFee(fees.serviceFee);
+    setModalGrandTotal(fees.grandTotal);
+    setIsSummaryModalOpen(true);
+
+    // navigate("/bulk-summary", {
+    //   state: {
+    //     purchaseList: newList,
+    //     subtotal: totalPrice,
+    //     serviceFee: fees.serviceFee,
+    //     grandTotal: fees.grandTotal,
+    //     totalPrice: fees.grandTotal,
+    //   },
+    // });
   };
 
   const handleSubmitNumbers = async () => {
@@ -246,7 +319,7 @@ const BulkPaymentPage: React.FC = () => {
         return clean;
       })
       .filter((num) => num.length === 11 && /^0\d{10}$/.test(num))
-      .slice(0, 500); // FIX: Limited to 500 numbers
+      .slice(0, 500);
 
     if (numbersToProcess.length === 0) {
       alert("Please enter valid Nigerian phone numbers.");
@@ -316,13 +389,9 @@ const BulkPaymentPage: React.FC = () => {
     setTotalPrice(0);
     setIsSamePrice(false);
     setAllNumbersBundle(null);
+    setCustomAmount("");
+    setCustomAmountError(null);
   };
-
-  const successfulItemsCount = detectedNumbers.filter(
-    (item) => item.selectedBundle
-  ).length;
-  const platformFee = successfulItemsCount * ITEM_PLATFORM_FEE;
-  const totalWithFee = totalPrice + platformFee;
 
   interface CsvRow {
     PhoneNumber: string;
@@ -353,7 +422,7 @@ const BulkPaymentPage: React.FC = () => {
             return clean;
           })
           .filter((num) => num.length === 11 && /^0\d{10}$/.test(num))
-          .slice(0, 500); // FIX: Limited to 500 numbers
+          .slice(0, 500);
 
         const numbersString = numbersToPopulate.join("\n");
         setBulkInput(numbersString);
@@ -363,315 +432,549 @@ const BulkPaymentPage: React.FC = () => {
       },
     });
   };
+
+  const fees = calculateFees();
+
   return (
-    <div className="bulk-page-container">
-      <h3 style={{ fontSize: 24, marginTop: 20, marginBottom: 0 }}>
-        Bulk Top-up
-      </h3>
-      <br />
-      <div
-        style={{
-          color: "#fff",
-          fontSize: 14,
-          fontWeight: 700,
-          backgroundColor: "#ff0000",
-          padding: `12px 12px`,
-          borderRadius: 12,
-          marginBottom: 32,
-          marginTop: -12,
-        }}
-      >
-        Anything more than 500 numbers contact admin
-      </div>
-      <div className="toggle-buttons">
-        <button
-          className={`toggle-btn ${isData ? "active" : ""}`}
-          onClick={() => handleToggleChange(true)}
-        >
-          Data
-        </button>
-        <button
-          className={`toggle-btn ${!isData ? "active" : ""}`}
-          onClick={() => handleToggleChange(false)}
-        >
-          Airtime
-        </button>
-      </div>
-      <div className="input-section">
-        <label htmlFor="bulk-input">
-          Paste up to 500 numbers (separate by space, comma or new line):
-        </label>{" "}
-        <br />
-        <textarea
-          id="bulk-input"
-          value={bulkInput}
-          onChange={handleBulkInput}
-          placeholder="e.g., 08012345678, 09012345678"
-          rows={5}
-        ></textarea>
+    <div
+      style={{
+        alignItems: "center",
+        justifyContent: "center",
+        display: "flex",
+      }}
+    >
+      <div className="bulk-page-container">
+        <h3 style={{ fontSize: 24, marginTop: 20, marginBottom: 0 }}>
+          Bulk Top-up
+        </h3>
         <br />
         <div
-          style={{ display: "flex", gap: 12, justifyContent: "space-between" }}
+          style={{
+            color: "#fff",
+            fontSize: 14,
+            fontWeight: 700,
+            backgroundColor: "#ff0000",
+            padding: `12px 12px`,
+            borderRadius: 12,
+            marginBottom: 32,
+            marginTop: -12,
+            cursor: "pointer",
+          }}
+          onClick={() =>
+            (window.location.href = "mailto:business@lukasdesignlab.com")
+          }
         >
-          <div
-            className="file-upload-wrapper"
-            style={{
-              color: "#ffdb1b",
-            }}
-          >
-            <label
-              htmlFor="csv-file-upload"
-              className="upload-btn"
-              style={{
-                color: "#ffdb1b",
-              }}
-            >
-              Upload CSV
-            </label>
-            <input
-              id="csv-file-upload"
-              type="file"
-              accept=".csv"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  handleCsvUploadAndPopulate(file);
-                }
-              }}
-            />
-            <p className="helper-text">Only .csv files are allowed</p>
-          </div>
-          <div>
-            <button
-              className="submit-numbers-btn"
-              style={{ height: 50 }}
-              onClick={handleSubmitNumbers}
-              disabled={bulkInput.trim().length === 0 || loading}
-            >
-              Submit All Numbers
-            </button>
-          </div>
+          For requests above 500 numbers, please contact admin at
+          business@lukasdesignlab.com
         </div>
-      </div>
-      {loading && <div className="loader" />}
-      {invalidNumbers.length > 0 && (
-        <div className="invalid-numbers-list">
-          <h3>Invalid or Undetected Numbers</h3>
-          {invalidNumbers.map((item) => (
-            <div key={item.id} className="number-item invalid">
-              <FaTimesCircle className="icon error-icon" />
-              <div className="number-details">
-                <h5 className="network-number">{item.number}</h5>
-                <p className="error-text">{item.error}</p>
-              </div>
-              <div className="number-actions">
-                <button
-                  onClick={() => deleteNumber(item.id, true)}
-                  className="action-btn delete-btn"
+        <div className="toggle-buttons">
+          <button
+            className={`toggle-btn ${isData ? "active" : ""}`}
+            onClick={() => handleToggleChange(true)}
+          >
+            Data
+          </button>
+          <button
+            className={`toggle-btn ${!isData ? "active" : ""}`}
+            onClick={() => handleToggleChange(false)}
+          >
+            Airtime
+          </button>
+        </div>
+        <div className="input-section">
+          <label htmlFor="bulk-input">
+            Paste up to 500 numbers (separate by space, comma or new line):
+          </label>{" "}
+          <br />
+          <textarea
+            id="bulk-input"
+            value={bulkInput}
+            onChange={handleBulkInput}
+            placeholder="e.g., 08012345678, 09012345678"
+            rows={5}
+          ></textarea>
+          <br />
+          {!loading && (
+            <div
+              style={{
+                display: "flex",
+                gap: 12,
+                justifyContent: "space-between",
+              }}
+            >
+              <div
+                className="file-upload-wrapper"
+                style={{
+                  color: "#ffdb1b",
+                }}
+              >
+                <label
+                  htmlFor="csv-file-upload"
+                  className="upload-btn"
+                  style={{
+                    color: "#ffdb1b",
+                  }}
                 >
-                  <FaTrash />
+                  Upload CSV
+                </label>
+                <input
+                  id="csv-file-upload"
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      handleCsvUploadAndPopulate(file);
+                    }
+                  }}
+                />
+                <p className="helper-text">Only CSV files are allowed</p>
+              </div>
+              <div>
+                <button
+                  className="submit-numbers-btn"
+                  style={{ height: 50 }}
+                  onClick={handleSubmitNumbers}
+                  disabled={bulkInput.trim().length === 0 || loading}
+                >
+                  Submit All Numbers
                 </button>
               </div>
             </div>
-          ))}
+          )}
         </div>
-      )}
-      {detectedNumbers.length > 0 && (
-        <div className="detected-numbers-list">
-          {!isData && (
-            <div className="same-price-toggle-container">
-              <input
-                id="same-price-toggle"
-                type="checkbox"
-                checked={isSamePrice}
-                onChange={() => setIsSamePrice(!isSamePrice)}
-              />
-              <label htmlFor="same-price-toggle">
-                Same Price for all numbers
-              </label>
-            </div>
-          )}
-          {!isData && isSamePrice ? (
-            <>
-              <h3>Select a Bundle for All Numbers</h3>
-              <div className="bundle-grid">
-                {airtimeBundles?.map((bundle) => (
+        {loading && <div className="loader" />}
+        {invalidNumbers.length > 0 && (
+          <div className="invalid-numbers-list">
+            <h3>Invalid or Undetected Numbers</h3>
+            {invalidNumbers.map((item) => (
+              <div key={item.id} className="number-item invalid">
+                <FaTimesCircle className="icon error-icon" />
+                <div className="number-details">
+                  <h5 className="network-number">{item.number}</h5>
+                  <p className="error-text">{item.error}</p>
+                </div>
+                <div className="number-actions">
                   <button
-                    key={bundle.id}
-                    className={`bundle-option ${
-                      allNumbersBundle?.id === bundle?.id ? "selected" : ""
-                    }`}
-                    onClick={() => handleAllNumbersBundleSelect(bundle)}
+                    onClick={() => deleteNumber(item.id, true)}
+                    className="action-btn delete-btn"
                   >
-                    <h4>₦{bundle?.price?.toLocaleString()}</h4>
-                    <p>Airtime</p>
+                    <FaTrash />
                   </button>
-                ))}
+                </div>
               </div>
-            </>
-          ) : (
-            <></>
-          )}
+            ))}
+          </div>
+        )}
+        {detectedNumbers.length > 0 && (
+          <div className="detected-numbers-list">
+            {!isData && (
+              <div className="same-price-toggle-container">
+                <input
+                  id="same-price-toggle"
+                  type="checkbox"
+                  checked={isSamePrice}
+                  onChange={() => setIsSamePrice(!isSamePrice)}
+                />
+                <label htmlFor="same-price-toggle">
+                  Same Price for all numbers
+                </label>
+              </div>
+            )}
+            {/* {!isData && !isSamePrice && (
+                        <div className="custom-airtime-input">
+                          <label>Enter Custom Amount (₦)</label>
+                          <input
+                            type="number"
+                            value={
+                              (item.selectedBundle as AirtimeBundle)?.isCustom
+                                ? (item.selectedBundle as AirtimeBundle)?.price
+                                : ""
+                            }
+                            onChange={(e) => {
+                              const num = Number(e.target.value);
+                              if (!isNaN(num) && num >= 50 && num <= 200000) {
+                                handleBundleSelect(item.id, {
+                                  amount: String(num),
+                                  price: num,
+                                  fixedPrice: num,
+                                  id: "custom-airtime-" + num,
+                                  isCustom: true,
+                                });
+                              } else {
+                                handleBundleSelect(item.id, undefined as any);
+                              }
+                            }}
+                            placeholder="e.g., 1000"
+                            min={50}
+                            max={200000}
+                          />
+                        </div>
+                      )} */}
 
-          <>
-            <br />
-            <h3>Detected Numbers</h3>
-            {detectedNumbers?.map((item) => (
-              <div key={item.id} className="accordion-container">
-                <div
-                  className="accordion-header"
-                  onClick={() => toggleAccordion(item.id)}
-                >
-                  <div className="network-info">
-                    <FaCheckCircle className="icon success-icon" />
-                    {item.detectedNetwork.logoUrls && (
-                      <img
-                        src={item.detectedNetwork.logoUrls}
-                        alt={`${item.detectedNetwork.name} logo`}
-                        className="operator-logo"
-                        style={{
-                          width: "24px",
-                          borderRadius: 4,
-                          height: "24px",
-                          marginRight: "8px",
-                        }}
-                      />
-                    )}
-                    <h5 className="network-number-detected">{item?.number}</h5>
-                    <span className="network-name-detected">
-                      ({item?.detectedNetwork?.name})
-                    </span>
-                    {item?.selectedBundle && (
-                      <span className="selected-bundle-summary">
-                        (
-                        {isData
-                          ? `${
-                              (item?.selectedBundle as DataBundle)
-                                ?.budDataAmount
-                            } `
-                          : `₦${(
-                              item?.selectedBundle as AirtimeBundle
-                            )?.price?.toLocaleString()}`}
-                        )
-                      </span>
-                    )}
-                  </div>
-                  <div className="accordion-actions">
+            {!isData && isSamePrice ? (
+              <>
+                <div className="custom-airtime-input">
+                  <label htmlFor="custom-amount">Enter Custom Amount (₦)</label>
+
+                  <br />
+                  <input
+                    id="custom-amount"
+                    type="number"
+                    value={customAmount}
+                    onChange={handleCustomAmountChange}
+                    placeholder="e.g., 1000"
+                    min={50}
+                    max={200000}
+                  />
+                  {customAmountError && (
+                    <p className="error-text">{customAmountError}</p>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteNumber(item?.id, false);
+                      onClick={() => {
+                        if (!customAmountError && customAmount) {
+                          handleAllNumbersBundleSelect({
+                            amount: String(customAmount),
+                            price: customAmount,
+                            fixedPrice: customAmount,
+                            id: "custom-airtime-" + customAmount,
+                            isCustom: true,
+                          });
+                        }
                       }}
-                      className="action-btn delete-btn"
+                      disabled={!!customAmountError || !customAmount}
                     >
-                      <FaTrash />
+                      Apply Custom Amount
                     </button>
-                    <span className="expand-icon">
-                      {expandedAccordions.includes(item?.id) ? (
-                        <FaChevronUp />
-                      ) : (
-                        <FaChevronDown />
-                      )}
-                    </span>
                   </div>
                 </div>
-                {expandedAccordions.includes(item?.id) && (
-                  <div className="accordion-content">
-                    {isData && (
-                      <div className="category-toggles">
-                        {categories?.map((category) => (
+
+                <h3>
+                  Select a Bundle for All Numbers or Enter a Custom Amount
+                </h3>
+                <div className="bundle-grid">
+                  {airtimeBundles?.map((bundle) => (
+                    <button
+                      key={bundle.id}
+                      className={`bundle-option ${
+                        allNumbersBundle?.id === bundle?.id ? "selected" : ""
+                      }`}
+                      onClick={() => handleAllNumbersBundleSelect(bundle)}
+                    >
+                      <h4>₦{bundle?.price?.toLocaleString()}</h4>
+                      <p>Airtime</p>
+                    </button>
+                  ))}
+                </div>
+
+                <br />
+              </>
+            ) : (
+              <></>
+            )}
+
+            <>
+              <br />
+              <h3>Detected Numbers</h3>
+              {detectedNumbers?.map((item) => (
+                <div key={item.id} className="accordion-container">
+                  <div
+                    className="accordion-header"
+                    onClick={() => toggleAccordion(item.id)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      width: "100%",
+                      alignItems: "flex-start",
+                      justifyItems: "flex-start",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyItems: "space-between",
+                        backgroundColor: "transparent",
+                        width: "100%",
+                        flexDirection: "row",
+                        margin: 0,
+                        padding: 0,
+                        marginBottom: 12,
+                      }}
+                      className="accordion-header"
+                    >
+                      <div className="network-info">
+                        <FaCheckCircle className="icon success-icon" />
+                        {item.detectedNetwork.logoUrls && (
+                          <img
+                            src={item.detectedNetwork.logoUrls}
+                            alt={`${item.detectedNetwork.name} logo`}
+                            className="operator-logo"
+                            style={{
+                              width: "24px",
+                              borderRadius: 4,
+                              height: "24px",
+                              marginRight: "8px",
+                            }}
+                          />
+                        )}
+                        <h5 className="network-number-detected">
+                          {item?.number}
+                        </h5>
+                      </div>
+
+                      <div className="accordion-actions">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNumber(item?.id, false);
+                          }}
+                          className="action-btn delete-btn"
+                        >
+                          <FaTrash />
+                        </button>
+                        <span className="expand-icon">
+                          {expandedAccordions.includes(item?.id) ? (
+                            <FaChevronUp />
+                          ) : (
+                            <FaChevronDown />
+                          )}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <span
+                        className="network-name-detected"
+                        style={{ fontSize: 13 }}
+                      >
+                        ({item?.detectedNetwork?.name})
+                      </span>
+                      {item?.selectedBundle && (
+                        <span
+                          className="selected-bundle-summary"
+                          style={{ fontSize: 13 }}
+                        >
+                          (
+                          {isData
+                            ? `${
+                                (item?.selectedBundle as DataBundle)
+                                  ?.budDataAmount
+                              } `
+                            : `₦${(
+                                item?.selectedBundle as AirtimeBundle
+                              )?.price?.toLocaleString()}`}
+                          )
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {expandedAccordions.includes(item?.id) && (
+                    <div className="accordion-content">
+                      {isData && (
+                        <div className="category-toggles">
+                          {categories?.map((category) => (
+                            <button
+                              key={category}
+                              className={`category-btn ${
+                                item?.selectedCategory === category
+                                  ? "active"
+                                  : ""
+                              }`}
+                              onClick={() =>
+                                handleCategorySelect(item?.id, category)
+                              }
+                            >
+                              {category}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      <div className="bundle-grid">
+                        {getNetworkBundles(
+                          item?.detectedNetwork?.name,
+                          item?.selectedCategory
+                        )?.map((bundle) => (
                           <button
-                            key={category}
-                            className={`category-btn ${
-                              item?.selectedCategory === category
-                                ? "active"
+                            key={bundle?.id}
+                            className={`bundle-option ${
+                              item?.selectedBundle?.id === bundle?.id
+                                ? "selected"
                                 : ""
                             }`}
                             onClick={() =>
-                              handleCategorySelect(item?.id, category)
+                              handleBundleSelect(item?.id, bundle as any)
                             }
                           >
-                            {category}
+                            {isData ? (
+                              <>
+                                <h5 style={{ fontSize: 16, marginBottom: 4 }}>
+                                  {(bundle as DataBundle)?.budDataAmount}
+                                </h5>
+                                <p>
+                                  ₦
+                                  {(
+                                    (bundle as DataBundle)?.retailPrice ?? 0
+                                  ).toLocaleString()}
+                                </p>
+                              </>
+                            ) : (
+                              <>
+                                <h4>
+                                  ₦
+                                  {(
+                                    bundle as AirtimeBundle
+                                  )?.price?.toLocaleString()}
+                                </h4>
+                                <p>Airtime</p>
+                              </>
+                            )}
                           </button>
                         ))}
                       </div>
-                    )}
-                    <div className="bundle-grid">
-                      {getNetworkBundles(
-                        item?.detectedNetwork?.name,
-                        item?.selectedCategory
-                      )?.map((bundle) => (
-                        <button
-                          key={bundle?.id}
-                          className={`bundle-option ${
-                            item?.selectedBundle?.id === bundle?.id
-                              ? "selected"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            handleBundleSelect(item?.id, bundle as any)
-                          }
-                        >
-                          {isData ? (
-                            <>
-                              <h5 style={{ fontSize: 16, marginBottom: 4 }}>
-                                {(bundle as DataBundle)?.budDataAmount}
-                              </h5>
-                              <p>
-                                ₦
-                                {(
-                                  (bundle as DataBundle)?.retailPrice ?? 0
-                                ).toLocaleString()}
-                              </p>
-                            </>
-                          ) : (
-                            <>
-                              <h4>
-                                ₦
-                                {(
-                                  bundle as AirtimeBundle
-                                )?.price?.toLocaleString()}
-                              </h4>
-                              <p>Airtime</p>
-                            </>
-                          )}
-                        </button>
-                      ))}
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </>
-        </div>
-      )}
-      {(detectedNumbers.length > 0 || invalidNumbers.length > 0) && (
-        <div className="payment-summary">
-          <div className="total-price-display">
-            <p style={{ fontSize: 16, color: "gray" }}>
-              Subtotal: ₦{totalPrice.toLocaleString()}
-            </p>
-            <p style={{ fontSize: 13, color: "gray" }}>
-              Platform Fee ({successfulItemsCount} x ₦
-              {ITEM_PLATFORM_FEE.toLocaleString()}): ₦
-              {platformFee.toLocaleString()}
-            </p>
-            <p style={{ fontWeight: 700, fontSize: 24 }}>
-              <span style={{ fontWeight: 500, fontSize: 13 }}>
-                Grand Total:
-              </span>{" "}
-              ₦{totalWithFee.toLocaleString()}
-            </p>
+                  )}
+                </div>
+              ))}
+            </>
           </div>
-          <button
-            className="pay-btn"
-            onClick={handlePay}
-            disabled={!allBundlesSelected || loading}
-          >
-            Pay for All
-          </button>
-        </div>
-      )}
+        )}
+        {(detectedNumbers.length > 0 || invalidNumbers.length > 0) && (
+          <div className="payment-summary">
+            <div className="total-price-display">
+              {/* Subtotal */}
+              <p style={{ fontSize: 16, color: "gray" }}>
+                Subtotal: ₦{totalPrice.toLocaleString()}
+              </p>
+
+              {/* Service Fee with Dropdown Toggle */}
+              <div
+                onClick={() => setIsServiceFeeExpanded(!isServiceFeeExpanded)}
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  fontSize: 16,
+                  color: "#666",
+                  gap: 4,
+                  padding: 12,
+                  backgroundColor: "#66666614",
+                  borderRadius: 16,
+                }}
+              >
+                <span>Service Fee: ₦{fees.serviceFee.toLocaleString()}</span>
+
+                <span>
+                  {isServiceFeeExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                </span>
+              </div>
+
+              {/* Expanded breakdown */}
+              {isServiceFeeExpanded && (
+                <div
+                  className="service-fee-breakdown"
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                    fontSize: 16,
+                    color: "#666",
+                    gap: 4,
+                    padding: 12,
+                    backgroundColor: "#66666614",
+                    borderRadius: 16,
+                    flexDirection: "column",
+                    marginTop: 12,
+                  }}
+                >
+                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
+                    Processing Fee(Per Number):
+                    <span
+                      style={{
+                        fontSize: 15,
+                        color: "#666",
+                        fontWeight: 700,
+                        marginLeft: 12,
+                      }}
+                    >
+                      ₦{fees.processingFee.toLocaleString()}
+                    </span>
+                  </p>
+                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
+                    Run Fee:
+                    <span
+                      style={{
+                        fontSize: 15,
+                        color: "#666",
+                        fontWeight: 700,
+                        marginLeft: 12,
+                      }}
+                    >
+                      ₦{fees.runFee.toLocaleString()}
+                    </span>
+                  </p>
+                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
+                    VAT:{" "}
+                    <span
+                      style={{
+                        fontSize: 15,
+                        color: "#666",
+                        fontWeight: 700,
+                        marginLeft: 12,
+                      }}
+                    >
+                      ₦{fees.vat.toLocaleString()}
+                    </span>
+                  </p>
+                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
+                    Paystack Fee:
+                    <span
+                      style={{
+                        fontSize: 15,
+                        color: "#666",
+                        fontWeight: 700,
+                        marginLeft: 12,
+                      }}
+                    >
+                      ₦{fees.paystackFee.toLocaleString()}
+                    </span>
+                  </p>
+                </div>
+              )}
+
+              {/* Grand Total */}
+              <p style={{ fontWeight: 700, fontSize: 24, marginTop: "1rem" }}>
+                <span style={{ fontWeight: 500, fontSize: 13 }}>
+                  Grand Total:
+                </span>{" "}
+                ₦{fees.grandTotal.toLocaleString()}
+              </p>
+            </div>
+            <button
+              className="pay-btn"
+              onClick={handlePay}
+              disabled={!allBundlesSelected || loading}
+            >
+              Pay for All
+            </button>
+          </div>
+        )}
+
+        {isSummaryModalOpen && (
+          <BulkSummaryPage
+            isOpen={isSummaryModalOpen}
+            onClose={() => setIsSummaryModalOpen(false)}
+            purchaseList={modalPurchaseList}
+            subtotal={modalSubtotal}
+            serviceFee={modalServiceFee}
+            grandTotal={modalGrandTotal}
+            totalPrice={modalGrandTotal} // totalPrice is now grandTotal
+          />
+        )}
+      </div>
     </div>
   );
 };

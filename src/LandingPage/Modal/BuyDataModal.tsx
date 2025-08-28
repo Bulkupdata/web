@@ -38,74 +38,72 @@ const BuyDataModal = ({
   const [operatorLoading, setOperatorLoading] = useState(false);
   const [operatorlogoUrls, setOperatorlogoUrls] = useState("");
 
+  const getCategoryFromPlanType = (planType: any) => {
+    const lowerCasePlanType = planType.toLowerCase();
+    if (
+      lowerCasePlanType.includes("daily") ||
+      lowerCasePlanType.includes("2 days")
+    ) {
+      return "Daily";
+    }
+    if (
+      lowerCasePlanType.includes("weekly") ||
+      lowerCasePlanType.includes("7 days")
+    ) {
+      return "Weekly";
+    }
+    if (
+      lowerCasePlanType.includes("monthly") ||
+      lowerCasePlanType.includes("30 days") ||
+      lowerCasePlanType.includes("60 days")
+    ) {
+      return "Monthly";
+    }
+    if (
+      lowerCasePlanType.includes("90 days") ||
+      lowerCasePlanType.includes("365 days")
+    ) {
+      return "Yearly";
+    }
+    return "Other";
+  };
+
   // Helper function to format category names
   const formatCategoryName = (name: string) => {
     if (!name) return "";
     return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
   };
 
-  const filterBundles = (category: string, operatorNickname: string) => {
+  const filterBundles = (category: any, operatorNickname: any) => {
     if (!operatorNickname) return [];
 
     const normalizedNickname = operatorNickname.toLowerCase();
-    const allBundles = dataBundles.filter(
+    const bundlesForNetwork = dataBundles.filter(
       (b) => b.network.toLowerCase() === normalizedNickname
     );
 
-    if (allBundles.length === 0) {
-      return [];
-    }
-
-    // Filter based on the planType (category)
-    return allBundles.filter(
-      (b) => b.planType.toLowerCase() === category.toLowerCase()
+    return bundlesForNetwork.filter(
+      (b) => getCategoryFromPlanType(b.planType) === category
     );
   };
-
   // Dynamically generate categories from the dataBundles based on the detected network
   const categories = useMemo(() => {
     if (!operatorNickname) return [];
 
-    const allAvailablePlanTypes = new Set<string>();
+    const allAvailablePlanTypes = new Set();
     dataBundles.forEach((b) => {
       if (b.network.toLowerCase() === operatorNickname.toLowerCase()) {
-        allAvailablePlanTypes.add(b.planType.toLowerCase());
+        allAvailablePlanTypes.add(getCategoryFromPlanType(b.planType));
       }
     });
 
-    // Define a preferred order for categories
-    const orderedCategories = [
-      "daily",
-      "2 days",
-      "weekly",
-      "7 days",
-      "monthly",
-      "30 days",
-      "60 days",
-      "90 days",
-      "120 days",
-      "365 days",
-      "unknown",
-    ];
-
-    // Filter and sort the categories
+    const orderedCategories = ["Daily", "Weekly", "Monthly", "Yearly"];
     const filteredCategories = orderedCategories.filter((cat) =>
       allAvailablePlanTypes.has(cat)
     );
 
-    // Set the first available category as default if the current selectedCategory is not available
-    if (
-      filteredCategories.length > 0 &&
-      !filteredCategories.includes(selectedCategory.toLowerCase())
-    ) {
-      setSelectedCategory(filteredCategories[0]);
-    } else if (filteredCategories.length === 0) {
-      setSelectedCategory(""); // No categories available
-    }
-
     return filteredCategories;
-  }, [operatorNickname, dataBundles, selectedCategory]); // Added dataBundles and selectedCategory to dependencies
-
+  }, [operatorNickname, dataBundles]);
   useEffect(() => {
     // This effect runs when operatorNickname changes, ensuring categories are updated
     // and a valid default category is set.

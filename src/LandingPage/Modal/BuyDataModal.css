@@ -192,9 +192,7 @@
     font-size: 13px;
 }
 
-.category-btn:hover {
-    background-color: #f0f0f0;
-}
+
 
 .category-btn.active {
     background-color: #ff0000;

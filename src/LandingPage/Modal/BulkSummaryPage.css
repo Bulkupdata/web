@@ -2,7 +2,19 @@
     padding: 120px 16px;
     min-height: 80vh;
 }
-
+/* Modal Container: The main content box for the summary */
+.bulk-summary-modal {
+    background-color: #fff;
+    color: #333;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    max-width: 1200px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-height: 90vh; /* Prevents the modal from being too tall on small screens */
+    overflow-y: auto; /* Adds scrolling if content is too long */
+  }
 .bulk-summary-title {
     font-size: 24px;
     margin-bottom: 20px;

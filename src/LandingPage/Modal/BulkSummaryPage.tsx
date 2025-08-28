@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import { FaTimes } from "react-icons/fa";
 
 import "./BulkSummaryPage.css";
 import AuthModal from "./AuthModal";
 import { BaseUrl, WebBaseUrl } from "../../redux/baseurl";
 
-interface PurchaseItem {
+export interface PurchaseItem {
   recipientPhone: { countryCode?: string; number: string };
   senderPhone?: { countryCode?: string; number: string };
   type: "Data" | "Airtime";
@@ -29,26 +29,33 @@ interface PurchaseItem {
   network?: any;
 }
 
-const BulkSummaryPage: React.FC = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+interface BulkSummaryPageProps {
+  isOpen: boolean;
+  onClose: () => void;
+  purchaseList: PurchaseItem[];
+  subtotal: number;
+  serviceFee: number;
+  grandTotal: number;
+  totalPrice: number; // This is the same as grandTotal
+}
 
-  const { purchaseList, totalPrice } = (location.state as {
-    purchaseList: PurchaseItem[];
-    totalPrice: number;
-  }) || {
-    purchaseList: [],
-    totalPrice: 0,
-  };
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
+  isOpen,
+  onClose,
+  purchaseList,
+  subtotal,
+  serviceFee,
+  grandTotal,
+  totalPrice,
+}) => {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("bulkup_data_token");
 
   const handleProceedToPay = async () => {
     if (!token) {
-      setIsModalOpen(true);
+      setIsAuthModalOpen(true);
       return;
     }
 
@@ -97,15 +104,14 @@ const BulkSummaryPage: React.FC = () => {
         };
       });
 
-      console.log("✅ Generated Topup Payloads:", topupPayloads);
+      console.log("✅ Generated Topup Payloads:", totalPrice, topupPayloads);
       localStorage.setItem("topupPayloads", JSON.stringify(topupPayloads));
 
-      // 🔹 Request Paystack checkout link from backend
       const response = await axios.post(
         `${BaseUrl}/api/reloadly/create-paystack-payment`,
         {
           email: "bulkupdata@gmail.com",
-          amount: totalPrice, // Paystack expects kobo (₦1000 = 100000)
+          amount: Math.round(grandTotal),
           callback_url: `${WebBaseUrl}/payment-success`,
           currency: "NGN",
         },
@@ -123,90 +129,126 @@ const BulkSummaryPage: React.FC = () => {
     }
   };
 
-  if (purchaseList.length === 0) {
-    return (
-      <div className="bulk-summary-page-container">
-        <h3>No items to summarize.</h3>
-        <button className="bulk-summary-btn" onClick={() => navigate("/")}>
-          Go Back
-        </button>
-      </div>
-    );
+  if (!isOpen) {
+    return null;
   }
 
   return (
-    <div className="bulk-summary-page-container">
-      <h3 className="bulk-summary-title">Purchase Summary</h3>
+    <div className="modal-overlay">
+      <div className="bulk-summary-modal">
+        <button className="modal-close-btn" onClick={onClose}>
+          <FaTimes />
+        </button>
+        <br />
+        <h2 className="" style={{ marginTop: 16 }}>
+          Purchase Summary
+        </h2>
 
-      {/* Summary Table */}
-      <div className="bulk-summary-table-wrapper">
-        <table className="bulk-summary-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Phone Number</th>
-              <th>Type</th>
-              <th>Bundle</th>
-              <th>Amount (₦)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {purchaseList.map((item, index) => (
-              <tr key={index}>
-                <td>{index + 1}</td>
-                <td>{item.recipientPhone.number}</td>
-                <td>{item.type}</td>
-                <td>
-                  {item.type === "Data"
-                    ? item.bundle?.budDataAmount ||
-                      item.bundle?.retailDataAmount ||
-                      "-"
-                    : "Airtime"}
-                </td>
-                <td>
-                  {(
-                    item.bundle?.retailPrice ??
-                    item.bundle?.price ??
-                    item.bundle?.fixedPrice ??
-                    item.amount ??
-                    0
-                  ).toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+        {/* Summary Table */}
+        {purchaseList.length === 0 ? (
+          <div className="no-items-message">
+            <p>No items to summarize.</p>
+            <button className="modal-back-btn" onClick={onClose}>
+              Go Back
+            </button>
+          </div>
+        ) : (
+          <div className="bulk-summary-table-wrapper">
+            <table className="bulk-summary-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Phone Number</th>
+                  <th>Type</th>
+                  <th>Bundle</th>
+                  <th>Amount (₦)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {purchaseList.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.recipientPhone.number}</td>
+                    <td>{item.type}</td>
+                    <td>
+                      {item.type === "Data"
+                        ? item.bundle?.budDataAmount ||
+                          item.bundle?.retailDataAmount ||
+                          "-"
+                        : "Airtime"}
+                    </td>
+                    <td>
+                      {(
+                        item.bundle?.retailPrice ??
+                        item.bundle?.price ??
+                        item.bundle?.fixedPrice ??
+                        item.amount ??
+                        0
+                      ).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      {/* Payment Section */}
-      <div className="bulk-summary-payment-summary">
-        <div className="bulk-summary-total-price-display">
-          Total Price: ₦{totalPrice?.toLocaleString()}
+        {/* Payment Section */}
+        <div className="bulk-summary-payment-summary">
+          <div className="bulk-summary-price-breakdown">
+            <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
+              Subtotal:
+              <span
+                style={{
+                  fontSize: 15,
+                  color: "#666",
+                  fontWeight: 700,
+                  marginLeft: 12,
+                }}
+              >
+                ₦{subtotal?.toLocaleString()}
+              </span>
+            </p>
+            <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
+              Service Fee:
+              <span
+                style={{
+                  fontSize: 15,
+                  color: "#666",
+                  fontWeight: 700,
+                  marginLeft: 12,
+                }}
+              >
+                ₦{serviceFee?.toLocaleString()}
+              </span>
+            </p>
+            <p style={{ fontWeight: 700, fontSize: 24, marginTop: "1rem" }}>
+              <span style={{ fontWeight: 500, fontSize: 13 }}>
+                Grand Total:
+              </span>{" "}
+              ₦{grandTotal?.toLocaleString()}
+            </p>
+          </div>
+          <br />
+          <button
+            className="bulk-summary-pay-btn"
+            onClick={handleProceedToPay}
+            disabled={loading || purchaseList.length === 0}
+          >
+            {loading ? (
+              <span className="loader"></span>
+            ) : token ? (
+              "Pay Now"
+            ) : (
+              "Proceed to Pay"
+            )}
+          </button>
         </div>
-        <button
-          className='bulk-summary-pay-btn'
-          onClick={handleProceedToPay}
-          disabled={loading}
-        >
-          {loading ? (
-            <span className="loader"></span>
-          ) : token ? (
-            "Pay Now"
-          ) : (
-            "Proceed to Pay"
-          )}
-        </button>
-      </div>
 
-      <AuthModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
-      <div style={{ marginTop: "20px" }}>
-        <button
-          className="bulk-summary-toggle-btn"
-          onClick={() => navigate("/")}
-        >
-          &larr; Go Back and Edit
-        </button>
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+        />
       </div>
     </div>
   );

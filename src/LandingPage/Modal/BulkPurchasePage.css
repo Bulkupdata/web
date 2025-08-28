@@ -59,6 +59,17 @@ textarea {
     min-height: 150px;
     resize: vertical;
 }
+input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border: 0.5px solid #000;
+    /* black border */
+    border-radius: 8px;
+    background: #fff;
+    resize: vertical;
+    margin-bottom: 12px
+}
 
 textarea:focus {
     outline: none;
@@ -170,7 +181,7 @@ textarea:focus {
 
 
 .edit-btn {
-    color: #007bff;
+    color: #28a745;
     display: none;
 }
 
@@ -210,7 +221,7 @@ textarea:focus {
 
 
 .bundle-option.selected {
-    border-color: #007bff;
+    border-color: #28a745;
     /* A distinct border color for selected state */
     background-color: #e6f2ff;
     /* A light background color */
@@ -283,12 +294,19 @@ textarea:focus {
     border: none
 }
 
+.bundle-option:hover {
+    background-color: #FFDB1B;
+    color: #121212;
+    border-color: #FFDB1B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
 
 
 .bundle-option.selected {
-    background-color: #007bff;
+    background-color: #28a745;
     color: #fff;
-    border-color: #007bff;
+    border-color: #28a745;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
 }
@@ -416,7 +434,7 @@ textarea:focus {
 }
 
 .same-price-toggle-container input[type="checkbox"]:checked+label::before {
-    background-color: #007bff;
+    background-color: #28a745;
 }
 
 .same-price-toggle-container input[type="checkbox"]:checked+label::after {
@@ -511,9 +529,9 @@ textarea:focus {
     }
 
     .bundle-option.selected {
-        background-color: #007bff;
+        background-color: #28a745;
         color: #fff;
-        border-color: #007bff;
+        border-color: #28a745;
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
     }

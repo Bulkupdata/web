@@ -28,7 +28,7 @@ import RechargeFailure from "./LandingPage/Status/RechargeFailure";
 
 // Features / Modals
 import BulkPurchasePage from "./LandingPage/Modal/BulkPurchasePage";
-import BulkSummaryPage from "./LandingPage/Modal/BulkSummaryPage";
+//import BulkSummaryPage from "./LandingPage/Modal/BulkSummaryPage";
 import Auth from "./LandingPage/Modal/Auth";
 import UserRechargesPage from "./LandingPage/Modal/UserRechargesPage";
 import Admin from "./LandingPage/Modal/Admin";
@@ -176,7 +176,7 @@ function App() {
             </PageLayout>
           }
         />
-        {/* Admin */}
+
         <Route
           path="/admin"
           element={
@@ -185,6 +185,7 @@ function App() {
             </PageLayout>
           }
         />
+
         <Route
           path="/admin-dashboard"
           element={
@@ -195,6 +196,7 @@ function App() {
             </PageLayout>
           }
         />
+
         <Route
           path="/admin-users"
           element={
@@ -214,14 +216,14 @@ function App() {
             </PageLayout>
           }
         />
-        <Route
+        {/* <Route
           path="/bulk-summary"
           element={
             <PageLayout>
               <BulkSummaryPage />
             </PageLayout>
           }
-        />
+        /> */}
       </Routes>
     </Router>
   );
