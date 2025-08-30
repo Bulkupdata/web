@@ -39,6 +39,7 @@ import FAQPage from "./LandingPage/FAQs/FAQPage";
 import FeedbackForm from "./LandingPage/FeedbackForm/FeedbackForm";
 import LiveChatButton from "./LandingPage/LiveChatButton/LiveChatButton";
 import AdminUsers from "./LandingPage/Modal/AdminUsers";
+import FeedbackList from "./LandingPage/FeedbackForm/FeedbackList";
 
 // ✅ Layout wrapper for consistent Navbar/Footer
 const PageLayout: React.FC<{
@@ -185,7 +186,16 @@ function App() {
             </PageLayout>
           }
         />
-
+        <Route
+          path="/admin-feedbacks"
+          element={
+            <PageLayout>
+              <AdminRoute>
+                <FeedbackList />
+              </AdminRoute>
+            </PageLayout>
+          }
+        />
         <Route
           path="/admin-dashboard"
           element={

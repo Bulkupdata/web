@@ -433,7 +433,7 @@ const BuyDataModal = ({
                           }}
                         >
                           ₦
-                          {bundle?.retailPrice?.toLocaleString()?.toLowerCase()}
+                          {bundle?.budPrice?.toLocaleString()?.toLowerCase()}
                         </p>
                         <p style={{ fontSize: 10, marginTop: 6 }}>
                           {formatCategoryName(bundle.planType)}
@@ -514,8 +514,8 @@ const BuyDataModal = ({
                   id: itemId,
                   operatorId: selectedBundle?.operatorId ?? operatorID,
                   retailDataAmount: selectedBundle?.retailDataAmount,
-                  retailPrice:
-                    selectedBundle?.retailPrice ?? selectedBundle?.price,
+                  budPrice:
+                    selectedBundle?.budPrice ?? selectedBundle?.price,
                   operatorNickname,
                   amount: buyData
                     ? selectedBundle.planAmount
@@ -570,7 +570,7 @@ const BuyDataModal = ({
                   {
                     email: "bulkupdata@gmail.com",
                     amount: buyData
-                      ? selectedBundle.retailPrice
+                      ? selectedBundle.budPrice
                       : selectedBundle.price,
                     callback_url: `${WebBaseUrl}/payment-success`,
                     currency: "NGN",

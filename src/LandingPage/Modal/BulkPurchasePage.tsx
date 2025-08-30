@@ -27,7 +27,7 @@ interface DataBundle {
   id: string;
   network: string;
   budDataAmount: string;
-  retailPrice: number;
+  budPrice: number;
   description: string;
   operatorId: number;
   planType: string;
@@ -40,7 +40,7 @@ interface AirtimeBundle {
   price: number;
   fixedPrice: number;
   id?: any;
-  retailPrice?: any;
+  budPrice?: any;
   logoUrls?: any;
   network?: any;
   isCustom?: boolean; // Already exists
@@ -82,7 +82,7 @@ const BulkPaymentPage: React.FC = () => {
     const total = numbers.reduce((sum, current) => {
       const price = current.selectedBundle
         ? isData
-          ? (current.selectedBundle as DataBundle).retailPrice
+          ? (current.selectedBundle as DataBundle).budPrice
           : (current.selectedBundle as AirtimeBundle).price
         : 0;
       return sum + price;
@@ -254,7 +254,7 @@ const BulkPaymentPage: React.FC = () => {
         const amount = selectedBundle.isCustom
           ? (selectedBundle as AirtimeBundle).price
           : buyData
-          ? (selectedBundle as DataBundle).retailPrice
+          ? (selectedBundle as DataBundle).budPrice
           : (selectedBundle as AirtimeBundle).fixedPrice;
 
         return {
@@ -815,7 +815,7 @@ const BulkPaymentPage: React.FC = () => {
                                 <p>
                                   ₦
                                   {(
-                                    (bundle as DataBundle)?.retailPrice ?? 0
+                                    (bundle as DataBundle)?.budPrice ?? 0
                                   ).toLocaleString()}
                                 </p>
                               </>

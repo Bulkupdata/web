@@ -6,6 +6,55 @@ import { BaseUrl } from '../baseurl';
 const API = `${BaseUrl}/api/auth`;
 console.log(`API Base URL: ${API}`);
 
+export const getAllFeedbacks = createAsyncThunk(
+    "feedbacks/getAll",
+    async (_, thunkAPI) => {
+        try {
+            const response = await axios.get(`${API}/get-all/all-users-feedbacks`);
+            console.log("getAllFeedbacks - API Response (Success):", response.data);
+            return response.data;
+        } catch (err: any) {
+            console.error(
+                "getAllFeedbacks - API Error (Catch Block):",
+                err.response?.data || err
+            );
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch feedbacks"
+            );
+        }
+    }
+);
+
+
+// Submit feedback
+export const submitFeedback = createAsyncThunk(
+    "feedback/submit",
+    async (
+        { name, email, suggestion }: { name: string; email: string; suggestion: string },
+        thunkAPI
+    ) => {
+        try {
+            const response = await axios.post(`${API}/submit-a-feedback`, {
+                name,
+                email,
+                suggestion,
+            });
+            console.log("submitFeedback - API Response (Success):", response.data);
+            return response.data;
+        } catch (err: any) {
+            console.error(
+                "submitFeedback - API Error (Catch Block):",
+                err.response?.data || err
+            );
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to submit feedback"
+            );
+        }
+    }
+);
+
+
+
 // -------------------- Async Thunks --------------------
 
 export const registerUser = createAsyncThunk(
@@ -134,9 +183,9 @@ const authSlice = createSlice({
 
             // Verify OTP
             .addCase(verifyOtp.fulfilled, () => {
-               // state.token = action.payload.token;
+                // state.token = action.payload.token;
                 //state.message = action.payload.message;
-               // localStorage.setItem('token', action.payload.token);
+                // localStorage.setItem('token', action.payload.token);
                 // console.log('verifyOtp.fulfilled: State updated:', state);
                 // console.log('verifyOtp.fulfilled: Action Payload:', action.payload);
                 // console.log('localStorage: token saved.');
@@ -157,7 +206,39 @@ const authSlice = createSlice({
                 state.error = action.payload as string;
                 console.error('loginUser.rejected: State updated with error:', state);
                 console.error('loginUser.rejected: Error Payload:', action.payload);
+            }).addCase(submitFeedback.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                console.log("submitFeedback.pending: Loading set to true.");
+            })
+            .addCase(submitFeedback.fulfilled, (state, action) => {
+                state.loading = false;
+                state.message = action.payload.message;
+                console.log("submitFeedback.fulfilled: State updated:", state);
+                console.log("submitFeedback.fulfilled: Action Payload:", action.payload);
+            })
+            .addCase(submitFeedback.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+                console.error("submitFeedback.rejected: State updated with error:", state);
+                console.error("submitFeedback.rejected: Error Payload:", action.payload);
+            })      // Get All Feedbacks
+            .addCase(getAllFeedbacks.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                console.log("getAllFeedbacks.pending: Loading set to true.");
+            })
+            .addCase(getAllFeedbacks.fulfilled, (state) => {
+                state.loading = false;
+                //state.feedbacks = action.payload;
+                console.log("getAllFeedbacks.fulfilled: Feedbacks fetched successfully.");
+            })
+            .addCase(getAllFeedbacks.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+                console.error("getAllFeedbacks.rejected: State updated with error:", state);
             });
+
     },
 });
 

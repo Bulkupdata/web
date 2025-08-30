@@ -25,7 +25,7 @@ const Admin = () => {
   const [isTokenUpdating, setIsTokenUpdating] = useState(false);
   const [tokenUpdateError, setTokenUpdateError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false); // New state for success modal
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("bulkup_data_admin_token");
@@ -71,8 +71,8 @@ const Admin = () => {
   const handleUpdateTokenSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsTokenUpdating(true); // Set local loading state
-    setTokenUpdateError(null); // Clear previous errors
+    setIsTokenUpdating(true);
+    setTokenUpdateError(null);
 
     console.log("Dispatching updateReloadlyToken with:", {
       clientId,
@@ -85,20 +85,18 @@ const Admin = () => {
       ).unwrap();
 
       console.log("Reloadly Access Token Update Success:", resultAction);
-      setSuccessMessage(resultAction.message); // Set local success message
+      setSuccessMessage(resultAction.message);
 
-      // Close the input modal and open the success modal
       setIsUpdateTokenModalOpen(false);
       setIsSuccessModalOpen(true);
 
-      // Clear inputs
       setClientId("");
       setClientSecret("");
     } catch (error: any) {
       console.error("Reloadly Access Token Update Failed:", error);
-      setTokenUpdateError(error); // Set local error message
+      setTokenUpdateError(error);
     } finally {
-      setIsTokenUpdating(false); // Reset local loading state
+      setIsTokenUpdating(false);
     }
   };
 
@@ -124,9 +122,18 @@ const Admin = () => {
           >
             Bulk Buyers
           </button>
+
+          {/* ✨ New button for feedbacks */}
           <button
             className="admin-btn secondary-btn"
-            style={{display:'none'}}
+            onClick={() => navigate("/admin-feedbacks")}
+          >
+            View Feedbacks
+          </button>
+
+          <button
+            className="admin-btn secondary-btn"
+            style={{ display: "none" }}
             onClick={() => setIsUpdateTokenModalOpen(true)}
           >
             Update Access Token
@@ -154,7 +161,7 @@ const Admin = () => {
         </div>
       )}
 
-      {/* Logout Confirmation Modal */}
+      {/* ... (existing modals) ... */}
       {isLogoutModalOpen && (
         <div className="admin-modal-overlay">
           <div className="admin-modal-card">
@@ -180,7 +187,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* Update Token Modal (for input) */}
       {isUpdateTokenModalOpen && (
         <div className="admin-modal-overlay">
           <div className="admin-modal-card">
@@ -234,7 +240,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* New Success Message Modal */}
       {isSuccessModalOpen && (
         <div className="admin-modal-overlay">
           <div className="admin-modal-card success-card">
