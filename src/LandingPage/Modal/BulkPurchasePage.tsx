@@ -728,7 +728,7 @@ const BulkPaymentPage: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            deleteNumber(item?.id, false);
+                         //   deleteNumber(item?.id, false);
                           }}
                           className="action-btn delete-btn"
                         >

@@ -1,4 +1,4 @@
-.modal-overlay {
+.feedback-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     z-index: 1000;
 }
 
-.modal-content {
+.feedback-modal-content {
     background: #fff;
     padding: 30px;
     border-radius: 10px;
@@ -34,7 +34,7 @@
     }
 }
 
-.modal-close-btn {
+.feedback-modal-close-btn {
     position: absolute;
     top: 10px;
     right: 15px;
@@ -46,7 +46,7 @@
     transition: color 0.2s;
 }
 
-.modal-close-btn:hover {
+.feedback-modal-close-btn:hover {
     color: #333;
 }
 
@@ -63,14 +63,17 @@
     color: #555;
 }
 
-.modal-suggestion-box {
+.feedback-modal-suggestion-box {
     background-color: #f0f8ff;
     border: 1px solid #cce5ff;
     border-radius: 8px;
     padding: 15px;
     margin-top: 20px;
 
-    max-height: 300px;   /* Restrict max height */
-    overflow-y: auto;    /* Enable vertical scrolling */
-    overflow-x: hidden;  /* Prevent horizontal scroll */
+    max-height: 300px;
+    /* Restrict max height */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
 }
