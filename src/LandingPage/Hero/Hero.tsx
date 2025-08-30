@@ -222,7 +222,7 @@ const Hero: React.FC = () => {
                     <p className="hero-content-tray-p">
                       {selected.description}
                     </p>
-                    <p
+                    {/* <p
                       className="hero-content-tray-p"
                       style={{
                         marginTop: 16,
@@ -230,7 +230,7 @@ const Hero: React.FC = () => {
                       }}
                     >
                       Starting from {selected.price}
-                    </p>
+                    </p> */}
 
                     <button
                       style={{
