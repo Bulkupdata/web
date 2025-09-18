@@ -1043,18 +1043,18 @@ export const dataBundles = [
         description: "N 19999 119GB (30 days)",
         operatorId: 647
     },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "110GB Monthly Plan 105GB + 5GB Night",
-        retailDataAmount: "not listed BUD EXCLUSIVE",
-        planAmount: 20000,
-        budPrice: 21999,
-        retailPrice: null,
-        planType: "30 days",
-        description: "N 21999 110GB Monthly Plan 105GB + 5GB Night(30 days)",
-        operatorId: 647
-    },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "110GB Monthly Plan 105GB + 5GB Night",
+    //     retailDataAmount: "not listed BUD EXCLUSIVE",
+    //     planAmount: 20000,
+    //     budPrice: 21999,
+    //     retailPrice: null,
+    //     planType: "30 days",
+    //     description: "N 21999 110GB Monthly Plan 105GB + 5GB Night(30 days)",
+    //     operatorId: 647
+    // },
     {
         id: uuidv4(),
         network: "Glo",
@@ -1130,210 +1130,211 @@ export const dataBundles = [
     ,
 
 
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "1.8GB",
-        retailDataAmount: "1.8GB",
-        planAmount: 500,
-        budPrice: 600, // Note: This BUD price is higher than Plan Amount
-        retailPrice: null,
-        planType: "Weekly",
-        description: "N 500 1.8GB (14 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "7.5GB",
-        retailDataAmount: "7.25GB",
-        planAmount: 1500,
-        budPrice: 1999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 2500,
-        planType: "30 days",
-        description: "N 1999 7.5GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "10.8GB",
-        retailDataAmount: "10GB",
-        planAmount: 2500,
-        budPrice: 2799, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 3000,
-        planType: "30 days",
-        description: "N 2799 10GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "14GB",
-        retailDataAmount: "12.5GB",
-        planAmount: 4000,
-        budPrice: 3999,
-        retailPrice: 4000,
-        planType: "30 days",
-        description: "N 3999 14GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "18GB",
-        retailDataAmount: "16GB",
-        planAmount: 4000,
-        budPrice: 4999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 5000,
-        planType: "30 days",
-        description: "N 4999 18GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "24GB",
-        retailDataAmount: "26GB",
-        planAmount: 5000,
-        budPrice: 6499, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 8000,
-        planType: "30 days",
-        description: "N 6499 10GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "29.5GB",
-        retailDataAmount: "26GB",
-        planAmount: 8000,
-        budPrice: 8800, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 8000,
-        planType: "30 days",
-        description: "N 8800 29GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "50GB",
-        retailDataAmount: "38GB",
-        planAmount: 10000,
-        budPrice: 12999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 10000,
-        planType: "30 days",
-        description: "N 12999 50GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "93GB",
-        retailDataAmount: "64GB",
-        planAmount: 15000,
-        budPrice: 16999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 15000,
-        planType: "30 days",
-        description: "N 16999 50GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "119GB",
-        retailDataAmount: "107GB",
-        planAmount: 18000,
-        budPrice: 19999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 20000,
-        planType: "30 days",
-        description: "N 19999 119GB (30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "110GB Monthly Plan 105GB + 5GB Night",
-        retailDataAmount: "not listed BUD EXCLUSIVE",
-        planAmount: 20000,
-        budPrice: 21999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: null,
-        planType: "30 days",
-        description: "N 21999 110GB Monthly Plan 105GB + 5GB Night(30 days)",
-        operatorId: 647
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "225GB",
-        retailDataAmount: "220GB",
-        planAmount: 30000,
-        budPrice: 37999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 40000,
-        planType: "30 days",
-        description: "N 37999 BUD EXCLUSIVE 225GB (30 days)",
-        operatorId: 931
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "300GB",
-        retailDataAmount: "310GB",
-        planAmount: 36000,
-        budPrice: 44999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 50000,
-        planType: "30 days",
-        description: "N 44999 BUD EXCLUSIVE 225GB (30 days)",
-        operatorId: 931
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "425GB",
-        retailDataAmount: "355GB",
-        planAmount: 50000,
-        budPrice: 57999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 60000,
-        planType: "90 days",
-        description: "N 57999 BUD EXCLUSIVE 225GB (90 days)",
-        operatorId: 931
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "525GB",
-        retailDataAmount: "475GB",
-        planAmount: 60000,
-        budPrice: 72999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 75000,
-        planType: "120 days",
-        description: "N 72999 BUD EXCLUSIVE 525GB (120 days)",
-        operatorId: 931
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "675GB",
-        retailDataAmount: "not listed",
-        planAmount: 75000,
-        budPrice: 94999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: null,
-        planType: "120 days",
-        description: "N 94999 BUD EXCLUSIVE 225GB (30 days)",
-        operatorId: 931
-    },
-    {
-        id: uuidv4(),
-        network: "Glo",
-        budDataAmount: "1000GB",
-        retailDataAmount: "1000GB",
-        planAmount: 100000,
-        budPrice: 139999, // Note: This BUD price is higher than Plan Amount
-        retailPrice: 150000,
-        planType: "365 days",
-        description: "N 139,999 BUD EXCLUSIVE 225GB (30 days)",
-        operatorId: 931
-    },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "1.8GB",
+    //     retailDataAmount: "1.8GB",
+    //     planAmount: 500,
+    //     budPrice: 600, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: null,
+    //     planType: "Weekly",
+    //     description: "N 500 1.8GB (14 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "7.5GB",
+    //     retailDataAmount: "7.25GB",
+    //     planAmount: 1500,
+    //     budPrice: 1999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 2500,
+    //     planType: "30 days",
+    //     description: "N 1999 7.5GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "10.8GB",
+    //     retailDataAmount: "10GB",
+    //     planAmount: 2500,
+    //     budPrice: 2799, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 3000,
+    //     planType: "30 days",
+    //     description: "N 2799 10GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "14GB",
+    //     retailDataAmount: "12.5GB",
+    //     planAmount: 4000,
+    //     budPrice: 3999,
+    //     retailPrice: 4000,
+    //     planType: "30 days",
+    //     description: "N 3999 14GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "18GB",
+    //     retailDataAmount: "16GB",
+    //     planAmount: 4000,
+    //     budPrice: 4999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 5000,
+    //     planType: "30 days",
+    //     description: "N 4999 18GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "24GB",
+    //     retailDataAmount: "26GB",
+    //     planAmount: 5000,
+    //     budPrice: 6499, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 8000,
+    //     planType: "30 days",
+    //     description: "N 6499 10GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "29.5GB",
+    //     retailDataAmount: "26GB",
+    //     planAmount: 8000,
+    //     budPrice: 8800, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 8000,
+    //     planType: "30 days",
+    //     description: "N 8800 29GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "50GB",
+    //     retailDataAmount: "38GB",
+    //     planAmount: 10000,
+    //     budPrice: 12999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 10000,
+    //     planType: "30 days",
+    //     description: "N 12999 50GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "93GB",
+    //     retailDataAmount: "64GB",
+    //     planAmount: 15000,
+    //     budPrice: 16999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 15000,
+    //     planType: "30 days",
+    //     description: "N 16999 50GB (30 days)",
+    //     operatorId: 647
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "119GB",
+    //     retailDataAmount: "107GB",
+    //     planAmount: 18000,
+    //     budPrice: 19999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 20000,
+    //     planType: "30 days",
+    //     description: "N 19999 119GB (30 days)",
+    //     operatorId: 647
+    // },
+    // // {
+    // //     id: uuidv4(),
+    // //     network: "Glo",
+    // //     budDataAmount: "110GB Monthly Plan 105GB + 5GB Night",
+    // //     retailDataAmount: "not listed BUD EXCLUSIVE",
+    // //     planAmount: 20000,
+    // //     budPrice: 21999, // Note: This BUD price is higher than Plan Amount
+    // //     retailPrice: null,
+    // //     planType: "30 days",
+    // //     description: "N 21999 110GB Monthly Plan 105GB + 5GB Night(30 days)",
+    // //     operatorId: 647
+    // // },
+
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "225GB",
+    //     retailDataAmount: "220GB",
+    //     planAmount: 30000,
+    //     budPrice: 37999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 40000,
+    //     planType: "30 days",
+    //     description: "N 37999 BUD EXCLUSIVE 225GB (30 days)",
+    //     operatorId: 931
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "300GB",
+    //     retailDataAmount: "310GB",
+    //     planAmount: 36000,
+    //     budPrice: 44999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 50000,
+    //     planType: "30 days",
+    //     description: "N 44999 BUD EXCLUSIVE 225GB (30 days)",
+    //     operatorId: 931
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "425GB",
+    //     retailDataAmount: "355GB",
+    //     planAmount: 50000,
+    //     budPrice: 57999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 60000,
+    //     planType: "90 days",
+    //     description: "N 57999 BUD EXCLUSIVE 225GB (90 days)",
+    //     operatorId: 931
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "525GB",
+    //     retailDataAmount: "475GB",
+    //     planAmount: 60000,
+    //     budPrice: 72999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 75000,
+    //     planType: "120 days",
+    //     description: "N 72999 BUD EXCLUSIVE 525GB (120 days)",
+    //     operatorId: 931
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "675GB",
+    //     retailDataAmount: "not listed",
+    //     planAmount: 75000,
+    //     budPrice: 94999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: null,
+    //     planType: "120 days",
+    //     description: "N 94999 BUD EXCLUSIVE 225GB (30 days)",
+    //     operatorId: 931
+    // },
+    // {
+    //     id: uuidv4(),
+    //     network: "Glo",
+    //     budDataAmount: "1000GB",
+    //     retailDataAmount: "1000GB",
+    //     planAmount: 100000,
+    //     budPrice: 139999, // Note: This BUD price is higher than Plan Amount
+    //     retailPrice: 150000,
+    //     planType: "365 days",
+    //     description: "N 139,999 BUD EXCLUSIVE 225GB (30 days)",
+    //     operatorId: 931
+    // },
 
 ];
 
