@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "push": "git add --all && git commit -m \"$npm_config_message\" && git push"
+
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
