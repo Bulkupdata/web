@@ -337,7 +337,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <h2 className="recharge-stats-title card-title">Recharge Statistics</h2>
+      {/* <h2 className="recharge-stats-title card-title">Recharge Statistics</h2>
       <div className="timeframe-buttons">
         {timeframeOptions.map((option) => (
           <button
@@ -395,7 +395,7 @@ const AdminDashboard = () => {
             </div>
           </>
         )}
-      </div>
+      </div> */}
 
       <DashboardAnalytics />
       <TransactionsTable />

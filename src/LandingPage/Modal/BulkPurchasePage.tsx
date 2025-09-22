@@ -383,12 +383,12 @@ const BulkPaymentPage: React.FC = () => {
 
   const handleToggleChange = (isDataToggle: boolean) => {
     setIsData(isDataToggle);
-    setDetectedNumbers([]);
-    setInvalidNumbers([]);
-    setBulkInput("");
-    setTotalPrice(0);
+    // setDetectedNumbers([]);
+    // setInvalidNumbers([]);
+    // setBulkInput("");
+    // setTotalPrice(0);
     setIsSamePrice(false);
-    setAllNumbersBundle(null);
+    // setAllNumbersBundle(null);
     setCustomAmount("");
     setCustomAmountError(null);
   };
@@ -728,7 +728,7 @@ const BulkPaymentPage: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                         //   deleteNumber(item?.id, false);
+                            //   deleteNumber(item?.id, false);
                           }}
                           className="action-btn delete-btn"
                         >
@@ -864,9 +864,11 @@ const BulkPaymentPage: React.FC = () => {
                   borderRadius: 16,
                 }}
               >
-                <span>Service Fee: ₦{fees.serviceFee.toLocaleString()}</span>
+                <span style={{ fontSize: 11, fontWeight: 500 }}>
+                  Service Fee: ₦{fees.serviceFee.toLocaleString()}
+                </span>
 
-                <span>
+                <span style={{ fontSize: 11, fontWeight: 900 }}>
                   {isServiceFeeExpanded ? <FaChevronUp /> : <FaChevronDown />}
                 </span>
               </div>

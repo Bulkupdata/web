@@ -140,6 +140,7 @@ const TransactionsTable: React.FC = () => {
     setCurrentPage(0); // Reset to the first page when a new filter is applied
   };
 
+  console.log(transactions, 'transactions')
   if (loading) {
     return (
       <div
