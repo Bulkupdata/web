@@ -87,34 +87,34 @@ const AdminDashboard = () => {
   const [allRecharges, setAllRecharges] = useState<Recharge[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] =
-    useState<string>("last_24_hours");
+  // const [selectedTimeframe, setSelectedTimeframe] =
+  //   useState<string>("last_24_hours");
   const [showBalance, setShowBalance] = useState<boolean>(true);
-  const [showRechargeAmount, setShowRechargeAmount] = useState<boolean>(true);
+  //const [showRechargeAmount, setShowRechargeAmount] = useState<boolean>(true);
 
   // Get admin name from localStorage on initial render
   const adminNameFromLocalStorage = localStorage.getItem(
     "bulkup_data_admin_name"
   );
 
-  const timeframeOptions = useMemo(
-    () => [
-      { value: "last_24_hours", label: "Last 24 Hours" },
-      { value: "last_48_hours", label: "Last 48 Hours" },
-      { value: "last_72_hours", label: "Last 72 Hours" },
-      { value: "last_1_week", label: "Last 1 Week" },
-      { value: "last_2_weeks", label: "Last 2 Weeks" },
-      { value: "last_4_weeks", label: "Last 4 Weeks" },
-      { value: "last_1_month", label: "Last 1 Month" },
-      { value: "last_2_months", label: "Last 2 Months" },
-      { value: "last_3_months", label: "Last 3 Months" },
-      { value: "last_6_months", label: "Last 6 Months" },
-      { value: "last_1_year", label: "Last 1 Year" },
-      { value: "last_2_years", label: "Last 2 Years" },
-      { value: "all_time", label: "All Time" },
-    ],
-    []
-  );
+  // const timeframeOptions = useMemo(
+  //   () => [
+  //     { value: "last_24_hours", label: "Last 24 Hours" },
+  //     { value: "last_48_hours", label: "Last 48 Hours" },
+  //     { value: "last_72_hours", label: "Last 72 Hours" },
+  //     { value: "last_1_week", label: "Last 1 Week" },
+  //     { value: "last_2_weeks", label: "Last 2 Weeks" },
+  //     { value: "last_4_weeks", label: "Last 4 Weeks" },
+  //     { value: "last_1_month", label: "Last 1 Month" },
+  //     { value: "last_2_months", label: "Last 2 Months" },
+  //     { value: "last_3_months", label: "Last 3 Months" },
+  //     { value: "last_6_months", label: "Last 6 Months" },
+  //     { value: "last_1_year", label: "Last 1 Year" },
+  //     { value: "last_2_years", label: "Last 2 Years" },
+  //     { value: "all_time", label: "All Time" },
+  //   ],
+  //   []
+  // );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -242,6 +242,7 @@ const AdminDashboard = () => {
   }, [allRecharges]);
 
   const { stats } = processedRecharges;
+  console.log(stats)
 
   const formatAmount = (amount: number): string => {
     return new Intl.NumberFormat("en-NG", {
