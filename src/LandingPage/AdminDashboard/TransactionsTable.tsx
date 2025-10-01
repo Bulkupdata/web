@@ -80,10 +80,10 @@ const TransactionsTable: React.FC = () => {
         if (operators.length === 0) {
           const uniqueOperators = new Map();
           fetchedTransactions.forEach((tx: Transaction) => {
-            if (!uniqueOperators.has(tx.operatorId)) {
-              uniqueOperators.set(tx.operatorId, {
-                id: tx.operatorId,
-                name: tx.operatorName,
+            if (!uniqueOperators.has(tx?.operatorId)) {
+              uniqueOperators.set(tx?.operatorId, {
+                id: tx?.operatorId,
+                name: tx?.operatorName,
               });
             }
           });
@@ -140,7 +140,7 @@ const TransactionsTable: React.FC = () => {
     setCurrentPage(0); // Reset to the first page when a new filter is applied
   };
 
-  console.log(transactions, 'transactions')
+  console.log(transactions, "transactions");
   if (loading) {
     return (
       <div
@@ -349,36 +349,39 @@ const TransactionsTable: React.FC = () => {
                 ?.slice()
                 ?.reverse()
                 ?.map((tx) => (
-                  <tr key={tx.transactionId}>
-                    <td>{tx.transactionId}</td>
+                  <tr key={tx?.transactionId}>
+                    <td>{tx?.transactionId}</td>
                     <td>
                       <span
-                        className={`status-badge ${tx.status.toLowerCase()}`}
+                        className={`status-badge ${tx?.status.toLowerCase()}`}
                       >
-                        {tx.status}
+                        {tx?.status}
                       </span>
                     </td>
-                    <td>{tx.recipientPhone}</td>
-                    <td>{tx.operatorName}</td>
+                    <td>{tx?.recipientPhone}</td>
+                    <td>{tx?.operatorName}</td>
                     <td>
                       {formatCurrency(
-                        tx.requestedAmount,
-                        tx.requestedAmountCurrencyCode
+                        tx?.requestedAmount,
+                        tx?.requestedAmountCurrencyCode
                       )}
                     </td>
                     <td>
                       {formatCurrency(
-                        tx.deliveredAmount,
-                        tx.deliveredAmountCurrencyCode
+                        tx?.deliveredAmount,
+                        tx?.deliveredAmountCurrencyCode
                       )}
                     </td>
                     <td>
-                      {formatCurrency(
-                        tx.balanceInfo.cost,
-                        tx.balanceInfo.currencyCode
-                      )}
+                      {tx?.balanceInfo
+                        ? formatCurrency(
+                            tx?.balanceInfo?.cost,
+                            tx?.balanceInfo?.currencyCode
+                          )
+                        : "N/A" // Display "N/A" or another placeholder if balanceInfo is null
+                      }
                     </td>
-                    <td>{formatDate(tx.transactionDate)}</td>
+                    <td>{formatDate(tx?.transactionDate)}</td>
                   </tr>
                 ))
             )}
