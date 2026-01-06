@@ -30,8 +30,9 @@ const UserRechargesPage: React.FC = () => {
     const userIdFromLocal = localStorage.getItem("bulkup_data_userId");
     if (userIdFromLocal) setCurrentUserId(userIdFromLocal);
     else {
-      setError("User session expired." || error);
+      setError("User session expired." );
       setLoading(false);
+      console.warn(error)
     }
   }, []);
 
