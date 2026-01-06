@@ -11,8 +11,6 @@ import {
 import { useDispatch } from "react-redux";
 import { autoDetectOperatorGroup } from "../../redux/Reloadly/Index";
 import { AppDispatch } from "../../redux/store";
-import "./BulkPurchasePage.css";
-//import { useNavigate } from "react-router-dom";
 import Papa from "papaparse";
 import BulkSummaryPage, { PurchaseItem } from "./BulkSummaryPage";
 
@@ -32,7 +30,7 @@ interface DataBundle {
   operatorId: number;
   planType: string;
   logoUrls?: any;
-  isCustom?: boolean; // Added optional 'isCustom' property
+  isCustom?: boolean;
 }
 
 interface AirtimeBundle {
@@ -43,13 +41,14 @@ interface AirtimeBundle {
   budPrice?: any;
   logoUrls?: any;
   network?: any;
-  isCustom?: boolean; // Already exists
+  isCustom?: boolean;
 }
 
 const categories = ["Daily", "Weekly", "Monthly", "90 days", "365 days"];
 
 const BulkPaymentPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const [isData, setIsData] = useState(true);
   const [bulkInput, setBulkInput] = useState("");
   const [detectedNumbers, setDetectedNumbers] = useState<
@@ -65,7 +64,9 @@ const BulkPaymentPage: React.FC = () => {
   >([]);
   const [invalidNumbers, setInvalidNumbers] = useState<
     { id: string; number: string; error: string; isEditing: boolean }[]
-  >([]);
+  >([
+    // Dummy for styling preview
+  ]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([]);
   const [allNumbersBundle, setAllNumbersBundle] =
@@ -77,13 +78,21 @@ const BulkPaymentPage: React.FC = () => {
   const [customAmountError, setCustomAmountError] = useState<string | null>(
     null
   );
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
+
+  const [modalPurchaseList, setModalPurchaseList] = useState<PurchaseItem[]>(
+    []
+  );
+  const [modalSubtotal, setModalSubtotal] = useState(0);
+  const [modalServiceFee, setModalServiceFee] = useState(0);
+  const [modalGrandTotal, setModalGrandTotal] = useState(0);
 
   const updateTotalPrice = (numbers: typeof detectedNumbers) => {
-    const total = numbers.reduce((sum, current) => {
-      const price = current.selectedBundle
+    const total = numbers.reduce((sum, item) => {
+      const price = item.selectedBundle
         ? isData
-          ? (current.selectedBundle as DataBundle).budPrice
-          : (current.selectedBundle as AirtimeBundle).price
+          ? (item.selectedBundle as DataBundle).budPrice
+          : (item.selectedBundle as AirtimeBundle).price
         : 0;
       return sum + price;
     }, 0);
@@ -96,47 +105,33 @@ const BulkPaymentPage: React.FC = () => {
 
   const getNetworkBundles = (networkName: string, category: string) => {
     if (!isData) {
-      return airtimeBundles.map((bundle) => ({
-        ...bundle,
-        network: networkName,
-      }));
+      return airtimeBundles.map((b) => ({ ...b, network: networkName }));
     }
-    const getPlanType = (categoryName: string) => {
-      switch (categoryName) {
-        case "Daily":
-          return ["daily", "2 days"];
-        case "Weekly":
-          return ["weekly", "7 days"];
-        case "Monthly":
-          return ["monthly", "30 days"];
-        case "90 days":
-          return ["90 days"];
-        case "365 days":
-          return ["365 days"];
-        default:
-          return ["daily", "2 days"];
-      }
-    };
-    const planTypes = getPlanType(category);
-    return dataBundles.filter(
-      (bundle) =>
-        networkName.toLowerCase().includes(bundle.network.toLowerCase()) &&
-        planTypes.includes(bundle.planType.toLowerCase())
-    );
-  };
 
-  const handleBulkInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    setBulkInput(value);
+    const planTypesMap: Record<string, string[]> = {
+      Daily: ["daily", "2 days"],
+      Weekly: ["weekly", "7 days"],
+      Monthly: ["monthly", "30 days"],
+      "90 days": ["90 days"],
+      "365 days": ["365 days"],
+    };
+
+    const planTypes = planTypesMap[category] || ["daily", "2 days"];
+
+    return dataBundles.filter(
+      (b) =>
+        networkName.toLowerCase().includes(b.network.toLowerCase()) &&
+        planTypes.includes(b.planType.toLowerCase())
+    );
   };
 
   const deleteNumber = (id: string, isInvalid: boolean) => {
     if (isInvalid) {
-      setInvalidNumbers((prev) => prev.filter((item) => item.id !== id));
+      setInvalidNumbers((prev) => prev.filter((n) => n.id !== id));
     } else {
-      const updatedNumbers = detectedNumbers.filter((item) => item.id !== id);
-      setDetectedNumbers(updatedNumbers);
-      updateTotalPrice(updatedNumbers);
+      const updated = detectedNumbers.filter((n) => n.id !== id);
+      setDetectedNumbers(updated);
+      updateTotalPrice(updated);
     }
   };
 
@@ -144,32 +139,29 @@ const BulkPaymentPage: React.FC = () => {
     numberId: string,
     bundle: DataBundle | AirtimeBundle
   ) => {
-    const updatedNumbers = detectedNumbers.map((num) =>
-      num.id === numberId ? { ...num, selectedBundle: bundle } : num
+    setDetectedNumbers((prev) =>
+      prev.map((n) =>
+        n.id === numberId ? { ...n, selectedBundle: bundle } : n
+      )
     );
-    setDetectedNumbers(updatedNumbers);
   };
 
-  const handleAllNumbersBundleSelect = (
-    bundle: AirtimeBundle,
-    numbersToUpdate = detectedNumbers
-  ) => {
+  const handleAllNumbersBundleSelect = (bundle: AirtimeBundle) => {
     setAllNumbersBundle(bundle);
-    const updatedNumbers = numbersToUpdate.map((num) => ({
-      ...num,
-      selectedBundle: bundle,
-    }));
-    setDetectedNumbers(updatedNumbers);
+    setDetectedNumbers((prev) =>
+      prev.map((n) => ({ ...n, selectedBundle: bundle }))
+    );
   };
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === "") {
+    const val = e.target.value;
+    if (val === "") {
       setCustomAmount("");
       setCustomAmountError(null);
       return;
     }
-    const num = Number(value);
+
+    const num = Number(val);
     if (isNaN(num)) {
       setCustomAmountError("Please enter a valid number.");
     } else if (num < 50 || num > 200000) {
@@ -182,146 +174,100 @@ const BulkPaymentPage: React.FC = () => {
 
   const handleCategorySelect = (numberId: string, category: string) => {
     setDetectedNumbers((prev) =>
-      prev.map((item) => {
-        if (item.id === numberId && item.selectedCategory !== category) {
-          return {
-            ...item,
-            selectedCategory: category,
-            selectedBundle: undefined,
-          };
-        }
-        return item;
-      })
+      prev.map((item) =>
+        item.id === numberId && item.selectedCategory !== category
+          ? { ...item, selectedCategory: category, selectedBundle: undefined }
+          : item
+      )
     );
   };
 
   const toggleAccordion = (id: string) => {
     setExpandedAccordions((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
-  //const navigate = useNavigate();
-  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
-
   const calculateFees = () => {
-    const successfulRecipients = detectedNumbers.filter(
-      (item) => item.selectedBundle
+    const successfulCount = detectedNumbers.filter(
+      (n) => n.selectedBundle
     ).length;
     const subtotal = totalPrice;
-
-    const processingFee = 499 * successfulRecipients;
+    const processingFee = 499 * successfulCount;
     const runFee = 50;
-    const vat = 0.075 * processingFee;
+    const vat = 0;
     const totalBeforePaystack = subtotal + processingFee + runFee + vat;
 
     let paystackFee = 0.015 * totalBeforePaystack;
-    if (paystackFee > 2000) {
-      paystackFee = 2000;
-    }
+    if (paystackFee > 2000) paystackFee = 2000;
 
     const serviceFee = processingFee + runFee + vat + paystackFee;
     const grandTotal = subtotal + serviceFee;
 
-    return {
-      processingFee,
-      runFee,
-      vat,
-      paystackFee,
-      serviceFee,
-      grandTotal,
-    };
+    return { processingFee, runFee, vat, paystackFee, serviceFee, grandTotal };
   };
 
-  const [modalPurchaseList, setModalPurchaseList] = useState<PurchaseItem[]>(
-    []
-  );
-  const [modalSubtotal, setModalSubtotal] = useState(0);
-  const [modalServiceFee, setModalServiceFee] = useState(0);
-  const [modalGrandTotal, setModalGrandTotal] = useState(0);
+  const fees = calculateFees();
 
   const handlePay = () => {
-    const newList = detectedNumbers
+    const purchaseList = detectedNumbers
       .map((item) => {
-        const buyData = isData;
-        const selectedBundle = item.selectedBundle;
-        const customId = uuidv4();
-        const phoneNumber = item.number;
-        if (!selectedBundle) {
-          return null;
-        }
+        if (!item.selectedBundle) return null;
 
-        const amount = selectedBundle.isCustom
-          ? (selectedBundle as AirtimeBundle).price
-          : buyData
-          ? (selectedBundle as DataBundle).budPrice
-          : (selectedBundle as AirtimeBundle).fixedPrice;
+        const bundle = item.selectedBundle;
+        const amount = bundle.isCustom
+          ? (bundle as AirtimeBundle).price
+          : isData
+          ? (bundle as DataBundle).budPrice
+          : (bundle as AirtimeBundle).fixedPrice;
+
+        const customId = uuidv4();
 
         return {
-          logoUrls: item?.logoUrls,
-          network: selectedBundle?.network,
-          operatorId: item?.operatorId,
+          logoUrls: item.logoUrls,
+          network: bundle.network,
+          operatorId: item.operatorId,
           amount,
           useLocalAmount: true,
           customIdentifier: customId,
           recipientEmail: "bulkupdata@gmail.com",
-          recipientPhone: {
-            countryCode: "NG",
-            number: phoneNumber,
-          },
-          senderPhone: {
-            countryCode: "NG",
-            number: phoneNumber,
-          },
+          recipientPhone: { countryCode: "NG", number: item.number },
+          senderPhone: { countryCode: "NG", number: item.number },
           buyData: isData,
           type: isData ? "Data" : "Airtime",
-          bundle: selectedBundle,
+          bundle,
         };
       })
-      .filter(Boolean);
+      .filter((x): x is any => !!x);
 
-    if (newList.length === 0) {
+    if (purchaseList.length === 0) {
       alert("Please select a bundle for at least one number.");
       return;
     }
 
-    const fees = calculateFees();
-
-    setModalPurchaseList(newList as any);
+    setModalPurchaseList(purchaseList as any);
     setModalSubtotal(totalPrice);
     setModalServiceFee(fees.serviceFee);
     setModalGrandTotal(fees.grandTotal);
     setIsSummaryModalOpen(true);
-
-    // navigate("/bulk-summary", {
-    //   state: {
-    //     purchaseList: newList,
-    //     subtotal: totalPrice,
-    //     serviceFee: fees.serviceFee,
-    //     grandTotal: fees.grandTotal,
-    //     totalPrice: fees.grandTotal,
-    //   },
-    // });
   };
 
   const handleSubmitNumbers = async () => {
     setDetectedNumbers([]);
     setInvalidNumbers([]);
-    const numbersToProcess = bulkInput
+
+    const numbers = bulkInput
       .split(/[\s,;]+/)
-      .map((num) => {
-        let clean = num.trim();
-        if (clean.startsWith("+234")) {
-          clean = "0" + clean.slice(4);
-        } else if (clean.startsWith("234")) {
-          clean = "0" + clean.slice(3);
-        }
+      .map((n) => {
+        let clean = n.trim();
+        if (clean.startsWith("+234")) clean = "0" + clean.slice(4);
+        if (clean.startsWith("234")) clean = "0" + clean.slice(3);
         return clean;
       })
-      .filter((num) => num.length === 11 && /^0\d{10}$/.test(num))
+      .filter((n) => n.length === 11 && /^0\d{10}$/.test(n))
       .slice(0, 500);
 
-    if (numbersToProcess.length === 0) {
+    if (numbers.length === 0) {
       alert("Please enter valid Nigerian phone numbers.");
       return;
     }
@@ -329,505 +275,405 @@ const BulkPaymentPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await dispatch(
-        autoDetectOperatorGroup({ phones: numbersToProcess, countryCode: "NG" })
+      const res = await dispatch(
+        autoDetectOperatorGroup({ phones: numbers, countryCode: "NG" })
       ).unwrap();
 
-      const newDetectedNumbers: any[] = [];
-      const newInvalidNumbers: any[] = [];
-      response.results.forEach((res: any) => {
-        const id = uuidv4();
-        if (res.success) {
-          const { data, phone } = res;
-          const operator = data;
-          const name = operator?.name || "";
-          const nickname = name.toLowerCase().split(" ")[0];
-          const logoUrls = operator?.logoUrls?.[0];
-          const detectedNetwork = { id: nickname, name, nickname, logoUrls };
-          const operatorId = operator?.operatorId || "";
+      const detected: typeof detectedNumbers = [];
+      const invalid: typeof invalidNumbers = [];
 
-          newDetectedNumbers.push({
+      res.results.forEach((r: any) => {
+        const id = uuidv4();
+        if (r.success) {
+          const { data, phone } = r;
+          const op = data;
+          const name = op?.name || "";
+          const nickname = name.toLowerCase().split(" ")[0];
+          const logoUrls = op?.logoUrls?.[0];
+
+          detected.push({
             id,
             number: phone,
-            detectedNetwork,
+            detectedNetwork: { id: nickname, name, nickname, logoUrls },
             selectedBundle: undefined,
-            operatorId,
+            operatorId: op?.operatorId || "",
             selectedCategory: "Daily",
             logoUrls,
           });
         } else {
-          const { phone, error } = res;
-          newInvalidNumbers.push({
+          invalid.push({
             id,
-            number: phone,
-            error: error || "Network not detected",
+            number: r.phone,
+            error: r.error || "Network not detected",
             isEditing: false,
           });
         }
       });
 
-      setDetectedNumbers(newDetectedNumbers);
-      setInvalidNumbers(newInvalidNumbers);
-    } catch (error) {
-      console.error("❌ Bulk auto-detect error:", error);
-      alert("Failed to detect networks for all numbers. Please try again.");
+      setDetectedNumbers(detected);
+      setInvalidNumbers(invalid);
+    } catch (err) {
+      console.error("Bulk auto-detect failed:", err);
+      alert("Failed to detect networks. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const allBundlesSelected =
-    isData || !isSamePrice
-      ? detectedNumbers.every((num) => num.selectedBundle !== undefined)
-      : !!allNumbersBundle;
-
-  const handleToggleChange = (isDataToggle: boolean) => {
-    setIsData(isDataToggle);
-    // setDetectedNumbers([]);
-    // setInvalidNumbers([]);
-    // setBulkInput("");
-    // setTotalPrice(0);
-    setIsSamePrice(false);
-    // setAllNumbersBundle(null);
-    setCustomAmount("");
-    setCustomAmountError(null);
-  };
-
-  interface CsvRow {
-    PhoneNumber: string;
-  }
-
-  const handleCsvUploadAndPopulate = (file: File) => {
-    if (!file) {
-      console.error("No file selected.");
-      return;
-    }
-
+  const handleCsvUpload = (file: File) => {
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
       complete: (results) => {
-        const allNumbers = (results.data as CsvRow[])
-          .map((row) => row.PhoneNumber)
+        const nums = (results.data as { PhoneNumber: string }[])
+          .map((r) => r.PhoneNumber?.trim())
           .filter(Boolean);
 
-        const numbersToPopulate = allNumbers
-          .map((num) => {
-            let clean = String(num).trim();
-            if (clean.startsWith("+234")) {
-              clean = "0" + clean.slice(4);
-            } else if (clean.startsWith("234")) {
-              clean = "0" + clean.slice(3);
-            }
+        const cleaned = nums
+          .map((n) => {
+            let clean = String(n);
+            if (clean.startsWith("+234")) clean = "0" + clean.slice(4);
+            if (clean.startsWith("234")) clean = "0" + clean.slice(3);
             return clean;
           })
-          .filter((num) => num.length === 11 && /^0\d{10}$/.test(num))
+          .filter((n) => n.length === 11 && /^0\d{10}$/.test(n))
           .slice(0, 500);
 
-        const numbersString = numbersToPopulate.join("\n");
-        setBulkInput(numbersString);
-      },
-      error: (err, file) => {
-        console.error("Error parsing CSV:", err, file);
+        setBulkInput(cleaned.join("\n"));
       },
     });
   };
 
-  const fees = calculateFees();
+  const allBundlesSelected =
+    isData || !isSamePrice
+      ? detectedNumbers.every((n) => !!n.selectedBundle)
+      : !!allNumbersBundle;
 
   return (
-    <div
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        display: "flex",
-      }}
-    >
-      <div className="bulk-page-container">
-        <h3 style={{ fontSize: 24, marginTop: 20, marginBottom: 0 }}>
+    <div className="min-h-screen bg-[#FDFDFD] text-slate-900 flex items-center justify-center p-4 font-sans">
+      <div className="w-full max-w-4xl mx-auto">
+        <h2 className="text-4xl font-black mt-6 mb-2 tracking-tight text-slate-900">
           Bulk Top-up
-        </h3>
-        <br />
+        </h2>
+        <p className="text-slate-500 mb-6 font-medium">
+          Fast, reliable bulk data and airtime processing.
+        </p>
+
         <div
-          style={{
-            color: "#fff",
-            fontSize: 14,
-            fontWeight: 700,
-            backgroundColor: "#ff0000",
-            padding: `12px 12px`,
-            borderRadius: 12,
-            marginBottom: 32,
-            marginTop: -12,
-            cursor: "pointer",
-          }}
+          className="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 text-sm font-bold p-4 rounded-r-xl mb-8 cursor-pointer  transition-all flex items-center justify-between group shadow-sm"
           onClick={() =>
             (window.location.href = "mailto:business@lukasdesignlab.com")
           }
         >
-          For requests above 500 numbers, please contact admin at
-          business@lukasdesignlab.com
+          <span>Need more than 500 numbers? Contact our enterprise team.</span>
+          <span className="underline ">Email Admin</span>
         </div>
-        <div className="toggle-buttons">
+
+        {/* Toggle Data / Airtime */}
+        <div className="flex gap-2 mb-8 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
           <button
-            className={`toggle-btn ${isData ? "active" : ""}`}
-            onClick={() => handleToggleChange(true)}
+            className={`flex-1 py-4 px-6 rounded-xl font-black transition-all ${
+              isData
+                ? "bg-yellow-400 text-slate-900 shadow-md"
+                : "bg-slate-200 text-slate-500"
+            }`}
+            onClick={() => setIsData(true)}
           >
-            Data
+            DATA
           </button>
           <button
-            className={`toggle-btn ${!isData ? "active" : ""}`}
-            onClick={() => handleToggleChange(false)}
+            className={`flex-1 py-4 px-6 rounded-xl font-black transition-all ${
+              !isData
+                ? "bg-yellow-400 text-slate-900 shadow-md"
+                : "bg-slate-200 text-slate-500"
+            }`}
+            onClick={() => setIsData(false)}
           >
-            Airtime
+            AIRTIME
           </button>
         </div>
-        <div className="input-section">
-          <label htmlFor="bulk-input">
-            Paste up to 500 numbers (separate by space, comma or new line):
-          </label>{" "}
-          <br />
+
+        {/* Input Area */}
+        <div className="mb-10 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+          <label className="block text-sm font-bold text-slate-600 mb-3  tracking-wider">
+            Phone Numbers List
+          </label>
           <textarea
-            id="bulk-input"
             value={bulkInput}
-            onChange={handleBulkInput}
-            placeholder="e.g., 08012345678, 09012345678"
+            onChange={(e) => setBulkInput(e.target.value)}
+            placeholder="08012345678, 09012345678..."
             rows={5}
-          ></textarea>
-          <br />
+            className="w-full p-5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 placeholder-slate-300 focus:outline-none focus:border-yellow-400 focus:bg-white transition-all resize-none font-mono text-lg"
+          />
+
           {!loading && (
-            <div
-              style={{
-                display: "flex",
-                gap: 12,
-                justifyContent: "space-between",
-              }}
-            >
-              <div
-                className="file-upload-wrapper"
-                style={{
-                  color: "#ffdb1b",
-                }}
-              >
+            <div className="flex flex-col sm:flex-row gap-4 mt-6 justify-between items-center">
+              <div>
                 <label
-                  htmlFor="csv-file-upload"
-                  className="upload-btn"
-                  style={{
-                    color: "#ffdb1b",
-                  }}
+                  htmlFor="csv-upload"
+                  className="inline-flex items-center px-6 py-3 bg-white text-slate-700 font-bold rounded-xl cursor-pointer transition-all border-2 border-slate-100 shadow-sm"
                 >
                   Upload CSV
                 </label>
                 <input
-                  id="csv-file-upload"
+                  id="csv-upload"
                   type="file"
                   accept=".csv"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      handleCsvUploadAndPopulate(file);
-                    }
-                  }}
+                  className="hidden"
+                  onChange={(e) =>
+                    e.target.files?.[0] && handleCsvUpload(e.target.files[0])
+                  }
                 />
-                <p className="helper-text">Only CSV files are allowed</p>
               </div>
-              <div>
-                <button
-                  className="submit-numbers-btn"
-                  style={{ height: 50 }}
-                  onClick={handleSubmitNumbers}
-                  disabled={bulkInput.trim().length === 0 || loading}
-                >
-                  Submit All Numbers
-                </button>
-              </div>
+
+              <button
+                onClick={handleSubmitNumbers}
+                disabled={!bulkInput.trim() || loading}
+                className="w-full sm:w-auto px-10 py-4 bg-yellow-400 text-slate-900 font-black rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all"
+              >
+                DETECT NETWORKS
+              </button>
             </div>
           )}
         </div>
-        {loading && <div className="loader" />}
+
+        {loading && (
+          <div className="text-center py-10">
+            <div className="animate-spin h-12 w-12 border-4 border-yellow-400 border-t-transparent rounded-full mx-auto"></div>
+            <p className="mt-4 font-bold text-slate-400">
+              Verifying numbers...
+            </p>
+          </div>
+        )}
+
+        {/* Invalid Numbers */}
         {invalidNumbers.length > 0 && (
-          <div className="invalid-numbers-list">
-            <h3>Invalid or Undetected Numbers</h3>
-            {invalidNumbers.map((item) => (
-              <div key={item.id} className="number-item invalid">
-                <FaTimesCircle className="icon error-icon" />
-                <div className="number-details">
-                  <h5 className="network-number">{item.number}</h5>
-                  <p className="error-text">{item.error}</p>
-                </div>
-                <div className="number-actions">
+          <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-lg font-black mb-4 text-red-500  tracking-tight">
+              Errors found
+            </h3>
+            <div className="grid gap-3">
+              {invalidNumbers.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between bg-red-50 p-4 rounded-2xl border border-red-100"
+                >
+                  <div className="flex items-center gap-4">
+                    <FaTimesCircle className="text-red-400 text-xl" />
+                    <div>
+                      <p className="font-bold text-slate-900">{item.number}</p>
+                      <p className="text-xs text-red-500 font-bold ">
+                        {item.error}
+                      </p>
+                    </div>
+                  </div>
                   <button
                     onClick={() => deleteNumber(item.id, true)}
-                    className="action-btn delete-btn"
+                    className="p-3 text-red-300  rounded-xl transition-all"
                   >
                     <FaTrash />
                   </button>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Detected Numbers */}
         {detectedNumbers.length > 0 && (
-          <div className="detected-numbers-list">
-            {!isData && (
-              <div className="same-price-toggle-container">
-                <input
-                  id="same-price-toggle"
-                  type="checkbox"
-                  checked={isSamePrice}
-                  onChange={() => setIsSamePrice(!isSamePrice)}
-                />
-                <label htmlFor="same-price-toggle">
-                  Same Price for all numbers
-                </label>
-              </div>
-            )}
-            {/* {!isData && !isSamePrice && (
-                        <div className="custom-airtime-input">
-                          <label>Enter Custom Amount (₦)</label>
-                          <input
-                            type="number"
-                            value={
-                              (item.selectedBundle as AirtimeBundle)?.isCustom
-                                ? (item.selectedBundle as AirtimeBundle)?.price
-                                : ""
-                            }
-                            onChange={(e) => {
-                              const num = Number(e.target.value);
-                              if (!isNaN(num) && num >= 50 && num <= 200000) {
-                                handleBundleSelect(item.id, {
-                                  amount: String(num),
-                                  price: num,
-                                  fixedPrice: num,
-                                  id: "custom-airtime-" + num,
-                                  isCustom: true,
-                                });
-                              } else {
-                                handleBundleSelect(item.id, undefined as any);
-                              }
-                            }}
-                            placeholder="e.g., 1000"
-                            min={50}
-                            max={200000}
-                          />
-                        </div>
-                      )} */}
-
-            {!isData && isSamePrice ? (
-              <>
-                <div className="custom-airtime-input">
-                  <label htmlFor="custom-amount">Enter Custom Amount (₦)</label>
-
-                  <br />
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-black text-slate-900">
+                Detected Recipient List
+              </h3>
+              {!isData && (
+                <label className="flex items-center gap-3 cursor-pointer group">
+                  <span className="text-sm font-bold text-slate-500 transition-colors">
+                    Bulk Amount
+                  </span>
                   <input
-                    id="custom-amount"
+                    type="checkbox"
+                    checked={isSamePrice}
+                    onChange={() => setIsSamePrice(!isSamePrice)}
+                    className="w-6 h-6  rounded-lg accent-yellow-400 cursor-pointer"
+                  />
+                </label>
+              )}
+            </div>
+
+            {isSamePrice && !isData && (
+              <div className="mb-8 p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl animate-in zoom-in-95 duration-300">
+                <label className="block text-sm font-bold text-slate-400 mb-3  tracking-widest">
+                  Global Airtime Amount (₦)
+                </label>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <input
                     type="number"
                     value={customAmount}
                     onChange={handleCustomAmountChange}
-                    placeholder="e.g., 1000"
-                    min={50}
-                    max={200000}
+                    placeholder="Enter amount (e.g. 1000)"
+                    className="flex-1 p-4 bg-slate-800 border-2 border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400"
                   />
-                  {customAmountError && (
-                    <p className="error-text">{customAmountError}</p>
-                  )}
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <button
-                      onClick={() => {
-                        if (!customAmountError && customAmount) {
-                          handleAllNumbersBundleSelect({
-                            amount: String(customAmount),
-                            price: customAmount,
-                            fixedPrice: customAmount,
-                            id: "custom-airtime-" + customAmount,
-                            isCustom: true,
-                          });
-                        }
-                      }}
-                      disabled={!!customAmountError || !customAmount}
-                    >
-                      Apply Custom Amount
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      if (!customAmountError && customAmount) {
+                        handleAllNumbersBundleSelect({
+                          amount: String(customAmount),
+                          price: customAmount,
+                          fixedPrice: customAmount,
+                          id: `custom-${customAmount}`,
+                          isCustom: true,
+                        });
+                      }
+                    }}
+                    disabled={!!customAmountError || !customAmount}
+                    className="px-8 py-4 bg-yellow-400 text-slate-900 font-black rounded-2xl isabled:opacity-30 transition-all"
+                  >
+                    APPLY ALL
+                  </button>
                 </div>
-
-                <h3>
-                  Select a Bundle for All Numbers or Enter a Custom Amount
-                </h3>
-                <div className="bundle-grid">
-                  {airtimeBundles?.map((bundle) => (
-                    <button
-                      key={bundle.id}
-                      className={`bundle-option ${
-                        allNumbersBundle?.id === bundle?.id ? "selected" : ""
-                      }`}
-                      onClick={() => handleAllNumbersBundleSelect(bundle)}
-                    >
-                      <h4>₦{bundle?.price?.toLocaleString()}</h4>
-                      <p>Airtime</p>
-                    </button>
-                  ))}
-                </div>
-
-                <br />
-              </>
-            ) : (
-              <></>
+                {customAmountError && (
+                  <p className="text-red-400 text-xs mt-3 font-bold ">
+                    {customAmountError}
+                  </p>
+                )}
+              </div>
             )}
 
-            <>
-              <br />
-              <h3>Detected Numbers</h3>
-              {detectedNumbers?.map((item) => (
-                <div key={item.id} className="accordion-container">
+            <div className="space-y-4">
+              {detectedNumbers.map((item) => (
+                <div
+                  key={item.id}
+                  className={`group bg-white rounded-3xl overflow-hidden border-2 transition-all duration-300 ${
+                    expandedAccordions.includes(item.id)
+                      ? "border-yellow-400 shadow-md"
+                      : "border-slate-100 shadow-sm"
+                  }`}
+                >
+                  {/* Header */}
                   <div
-                    className="accordion-header"
                     onClick={() => toggleAccordion(item.id)}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                      alignItems: "flex-start",
-                      justifyItems: "flex-start",
-                    }}
+                    className="flex flex-col p-5 cursor-pointer select-none"
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyItems: "space-between",
-                        backgroundColor: "transparent",
-                        width: "100%",
-                        flexDirection: "row",
-                        margin: 0,
-                        padding: 0,
-                        marginBottom: 12,
-                      }}
-                      className="accordion-header"
-                    >
-                      <div className="network-info">
-                        <FaCheckCircle className="icon success-icon" />
-                        {item.detectedNetwork.logoUrls && (
-                          <img
-                            src={item.detectedNetwork.logoUrls}
-                            alt={`${item.detectedNetwork.name} logo`}
-                            className="operator-logo"
-                            style={{
-                              width: "24px",
-                              borderRadius: 4,
-                              height: "24px",
-                              marginRight: "8px",
-                            }}
-                          />
-                        )}
-                        <h5 className="network-number-detected">
-                          {item?.number}
-                        </h5>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <FaCheckCircle className="text-green-500 text-lg absolute -top-1 -right-1 bg-white rounded-full z-10" />
+                          {item.detectedNetwork.logoUrls ? (
+                            <img
+                              src={item.detectedNetwork.logoUrls}
+                              alt="logo"
+                              className="w-12 h-12 rounded-2xl object-cover border-2 border-slate-50 shadow-sm"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 bg-slate-100 rounded-2xl" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-black text-slate-900 text-lg leading-none">
+                            {item.number}
+                          </p>
+                          <p className="text-xs text-slate-400 font-bold  mt-1">
+                            {item.detectedNetwork.name}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="accordion-actions">
+                      <div className="flex items-center gap-4">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            //   deleteNumber(item?.id, false);
+                            deleteNumber(item.id, false);
                           }}
-                          className="action-btn delete-btn"
+                          className="p-3 text-slate-300 rounded-xl transition-all"
                         >
-                          <FaTrash />
+                          <FaTrash size={18} />
                         </button>
-                        <span className="expand-icon">
-                          {expandedAccordions.includes(item?.id) ? (
-                            <FaChevronUp />
-                          ) : (
-                            <FaChevronDown />
-                          )}
-                        </span>
+                        <div
+                          className={`transition-transform duration-300 ${
+                            expandedAccordions.includes(item.id)
+                              ? "rotate-180 text-yellow-500"
+                              : "text-slate-300"
+                          }`}
+                        >
+                          <FaChevronDown />
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <span
-                        className="network-name-detected"
-                        style={{ fontSize: 13 }}
-                      >
-                        ({item?.detectedNetwork?.name})
-                      </span>
-                      {item?.selectedBundle && (
-                        <span
-                          className="selected-bundle-summary"
-                          style={{ fontSize: 13 }}
-                        >
-                          (
+                    {item.selectedBundle && (
+                      <div className="mt-4 flex items-center gap-2">
+                        <span className="text-xs font-black text-slate-900 bg-yellow-400 px-3 py-1.5 rounded-lg  tracking-tight shadow-sm">
                           {isData
-                            ? `${
-                                (item?.selectedBundle as DataBundle)
-                                  ?.budDataAmount
-                              } `
+                            ? (item.selectedBundle as DataBundle).budDataAmount
                             : `₦${(
-                                item?.selectedBundle as AirtimeBundle
-                              )?.price?.toLocaleString()}`}
-                          )
+                                item.selectedBundle as AirtimeBundle
+                              ).price.toLocaleString()}`}
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
-                  {expandedAccordions.includes(item?.id) && (
-                    <div className="accordion-content">
+
+                  {/* Content */}
+                  {expandedAccordions.includes(item.id) && (
+                    <div className="px-5 pb-6 pt-2 bg-slate-50/50 animate-in slide-in-from-top-2 duration-300">
                       {isData && (
-                        <div className="category-toggles">
-                          {categories?.map((category) => (
+                        <div className="flex flex-wrap gap-2 mb-6 p-1 bg-slate-200/50 rounded-xl w-fit">
+                          {categories.map((cat) => (
                             <button
-                              key={category}
-                              className={`category-btn ${
-                                item?.selectedCategory === category
-                                  ? "active"
-                                  : ""
+                              key={cat}
+                              onClick={() => handleCategorySelect(item.id, cat)}
+                              className={`px-4 py-2 text-xs font-black rounded-lg transition-all ${
+                                item.selectedCategory === cat
+                                  ? "bg-white text-slate-900 shadow-sm"
+                                  : "text-slate-500 "
                               }`}
-                              onClick={() =>
-                                handleCategorySelect(item?.id, category)
-                              }
                             >
-                              {category}
+                              {cat}
                             </button>
                           ))}
                         </div>
                       )}
-                      <div className="bundle-grid">
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {getNetworkBundles(
-                          item?.detectedNetwork?.name,
-                          item?.selectedCategory
-                        )?.map((bundle) => (
+                          item.detectedNetwork.name,
+                          item.selectedCategory
+                        ).map((bundle) => (
                           <button
-                            key={bundle?.id}
-                            className={`bundle-option ${
-                              item?.selectedBundle?.id === bundle?.id
-                                ? "selected"
-                                : ""
-                            }`}
+                            key={bundle.id}
                             onClick={() =>
-                              handleBundleSelect(item?.id, bundle as any)
+                              handleBundleSelect(item.id, bundle as any)
                             }
+                            className={`p-4 rounded-2xl text-left border-2 transition-all group/btn ${
+                              item.selectedBundle?.id === bundle.id
+                                ? "border-yellow-400 bg-yellow-50 shadow-inner"
+                                : "border-white bg-white hover:bg-slate-50 hover:border-slate-200"
+                            }`}
                           >
                             {isData ? (
                               <>
-                                <h5 style={{ fontSize: 16, marginBottom: 4 }}>
-                                  {(bundle as DataBundle)?.budDataAmount}
-                                </h5>
-                                <p>
+                                <div className="font-black text-slate-900 text-lg tracking-tighter">
+                                  {(bundle as DataBundle).budDataAmount}
+                                </div>
+                                <div className="text-xs font-bold text-slate-400">
                                   ₦
                                   {(
-                                    (bundle as DataBundle)?.budPrice ?? 0
-                                  ).toLocaleString()}
-                                </p>
+                                    bundle as DataBundle
+                                  ).budPrice.toLocaleString()}
+                                </div>
                               </>
                             ) : (
                               <>
-                                <h4>
+                                <div className="font-black text-slate-900 text-lg tracking-tighter">
                                   ₦
                                   {(
                                     bundle as AirtimeBundle
-                                  )?.price?.toLocaleString()}
-                                </h4>
-                                <p>Airtime</p>
+                                  ).price.toLocaleString()}
+                                </div>
+                                <div className="text-xs font-bold text-slate-400  tracking-widest">
+                                  Credit
+                                </div>
                               </>
                             )}
                           </button>
@@ -837,130 +683,86 @@ const BulkPaymentPage: React.FC = () => {
                   )}
                 </div>
               ))}
-            </>
+            </div>
           </div>
         )}
+
+        {/* Summary & Pay */}
         {(detectedNumbers.length > 0 || invalidNumbers.length > 0) && (
-          <div className="payment-summary">
-            <div className="total-price-display">
-              {/* Subtotal */}
-              <p style={{ fontSize: 16, color: "gray" }}>
-                Subtotal: ₦{totalPrice.toLocaleString()}
-              </p>
+          <div className="bg-white p-8 rounded-[2.5rem] border-2 border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] mb-10 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 pointer-events-none">
+              <FaCheckCircle size={140} className="text-yellow-400" />
+            </div>
 
-              {/* Service Fee with Dropdown Toggle */}
-              <div
-                onClick={() => setIsServiceFeeExpanded(!isServiceFeeExpanded)}
-                style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  fontSize: 16,
-                  color: "#666",
-                  gap: 4,
-                  padding: 12,
-                  backgroundColor: "#66666614",
-                  borderRadius: 16,
-                }}
-              >
-                <span style={{ fontSize: 11, fontWeight: 500 }}>
-                  Service Fee: ₦{fees.serviceFee.toLocaleString()}
+            <div className="space-y-5 relative z-10">
+              <div className="flex justify-between items-end">
+                <span className="text-slate-400 font-bold  tracking-widest text-xs">
+                  Bundle Total
                 </span>
-
-                <span style={{ fontSize: 11, fontWeight: 900 }}>
-                  {isServiceFeeExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                <span className="text-slate-900 font-black text-2xl tracking-tighter">
+                  ₦{totalPrice.toLocaleString()}
                 </span>
               </div>
 
-              {/* Expanded breakdown */}
+              <div
+                onClick={() => setIsServiceFeeExpanded(!isServiceFeeExpanded)}
+                className={`flex justify-between items-center cursor-pointer py-4 px-6 rounded-2xl transition-all border-2 ${
+                  isServiceFeeExpanded
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "bg-slate-50 text-slate-600 border-slate-50 "
+                }`}
+              >
+                <span className="font-bold">Service Fees</span>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`font-black ${
+                      isServiceFeeExpanded
+                        ? "text-yellow-400"
+                        : "text-slate-900"
+                    }`}
+                  >
+                    ₦{fees.serviceFee.toLocaleString()}
+                  </span>
+                  <span className="opacity-50">
+                    {isServiceFeeExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                  </span>
+                </div>
+              </div>
+
               {isServiceFeeExpanded && (
-                <div
-                  className="service-fee-breakdown"
-                  style={{
-                    cursor: "pointer",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
-                    fontSize: 16,
-                    color: "#666",
-                    gap: 4,
-                    padding: 12,
-                    backgroundColor: "#66666614",
-                    borderRadius: 16,
-                    flexDirection: "column",
-                    marginTop: 12,
-                  }}
-                >
-                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
-                    Processing Fee(Per Number):
-                    <span
-                      style={{
-                        fontSize: 15,
-                        color: "#666",
-                        fontWeight: 700,
-                        marginLeft: 12,
-                      }}
-                    >
-                      ₦{fees.processingFee.toLocaleString()}
+                <div className="px-6 py-2 space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="flex justify-between text-sm font-bold text-slate-500">
+                    <span>Gateways & Processing</span>
+                    <span className="text-slate-900">
+                      ₦
+                      {(fees.processingFee + fees.paystackFee).toLocaleString()}
                     </span>
-                  </p>
-                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
-                    Run Fee:
-                    <span
-                      style={{
-                        fontSize: 15,
-                        color: "#666",
-                        fontWeight: 700,
-                        marginLeft: 12,
-                      }}
-                    >
+                  </div>
+                  <div className="flex justify-between text-sm font-bold text-slate-500">
+                    <span>System Maintenance</span>
+                    <span className="text-slate-900">
                       ₦{fees.runFee.toLocaleString()}
                     </span>
-                  </p>
-                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
-                    VAT:{" "}
-                    <span
-                      style={{
-                        fontSize: 15,
-                        color: "#666",
-                        fontWeight: 700,
-                        marginLeft: 12,
-                      }}
-                    >
-                      ₦{fees.vat.toLocaleString()}
-                    </span>
-                  </p>
-                  <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
-                    Paystack Fee:
-                    <span
-                      style={{
-                        fontSize: 15,
-                        color: "#666",
-                        fontWeight: 700,
-                        marginLeft: 12,
-                      }}
-                    >
-                      ₦{fees.paystackFee.toLocaleString()}
-                    </span>
-                  </p>
+                  </div>
                 </div>
               )}
 
-              {/* Grand Total */}
-              <p style={{ fontWeight: 700, fontSize: 24, marginTop: "1rem" }}>
-                <span style={{ fontWeight: 500, fontSize: 13 }}>
-                  Grand Total:
-                </span>{" "}
-                ₦{fees.grandTotal.toLocaleString()}
-              </p>
+              <div className="pt-6 border-t-2 border-slate-100 flex justify-between items-center">
+                <span className="text-slate-900 font-black text-xl">
+                  Total Due
+                </span>
+                <span className="text-yellow-500 font-black text-4xl tracking-tight">
+                  ₦{fees.grandTotal.toLocaleString()}
+                </span>
+              </div>
             </div>
+
             <button
-              className="pay-btn"
               onClick={handlePay}
               disabled={!allBundlesSelected || loading}
+              className="w-full mt-10 py-5 bg-yellow-400 text-slate-900 font-black text-xl rounded-2xl active:translate-y-0 disabled:opacity-30 disabled:transform-none transition-all shadow-xl shadow-yellow-200"
             >
-              Pay for All
+              PROCEED TO SECURE PAYMENT
             </button>
           </div>
         )}
@@ -973,7 +775,7 @@ const BulkPaymentPage: React.FC = () => {
             subtotal={modalSubtotal}
             serviceFee={modalServiceFee}
             grandTotal={modalGrandTotal}
-            totalPrice={modalGrandTotal} // totalPrice is now grandTotal
+            totalPrice={modalGrandTotal}
           />
         )}
       </div>

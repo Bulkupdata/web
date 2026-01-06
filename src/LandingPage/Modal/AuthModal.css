@@ -52,9 +52,7 @@
   transition: color 0.2s ease;
 }
 
-.auth-modal-close-btn:hover {
-  color: #333;
-}
+
 
 .auth-modal-title {
   font-size: 1.7rem;
@@ -112,11 +110,7 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 
-.auth-submit-btn:hover:not(:disabled) {
-  background-color: #e6c600;
-  /* darker yellow */
-  transform: translateY(-2px);
-}
+
 
 .auth-submit-btn:disabled {
   background-color: #f5e27a;
@@ -163,10 +157,6 @@
   font-weight: 700;
   text-decoration: underline;
   transition: color 0.2s ease;
-}
-
-.auth-link:hover {
-  color: #e6c600;
 }
 
 .auth-info-text {

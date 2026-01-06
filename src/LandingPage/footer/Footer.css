@@ -63,7 +63,7 @@
   transition: 0.3s ease;
 }
 
-.bulkupdata-footer-contact a:hover {
+.bulkupdata-footer-contact {
   color: #f44336;
   text-decoration: underline;
 }
@@ -89,7 +89,7 @@
   transition: all 0.3s ease;
 }
 
-.bulkupdata-footer-links li a:hover {
+.bulkupdata-footer-links li {
   color: #f44336;
   text-decoration: underline;
 }
@@ -139,7 +139,7 @@
   transition: color 0.3s ease;
 }
 
-.bulkupdata-footer-links li a:hover {
+.bulkupdata-footer-links li {
   color: #f44336;
   text-decoration: underline;
 }

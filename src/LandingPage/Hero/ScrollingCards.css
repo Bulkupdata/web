@@ -52,11 +52,9 @@
     /* Hide the p tags */
 }
 
-/* Hover effect */
-.scroll-card:hover .card-overlay {
+.card-overlay {
     background-color: #023009;
     padding: 32px;
-    /* Increase padding on hover */
     color: #fff;
 }
 

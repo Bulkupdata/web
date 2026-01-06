@@ -71,8 +71,3 @@
 .bulk-summary-toggle-btn {
     background-color: #66666645;
 }
-
-.bulk-summary-pay-btn:hover,
-.bulk-summary-toggle-btn:hover {
-    opacity: 0.9;
-}

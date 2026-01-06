@@ -294,13 +294,7 @@ textarea:focus {
     border: none
 }
 
-.bundle-option:hover {
-    background-color: #FFDB1B;
-    color: #121212;
-    border-color: #FFDB1B;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-}
+
 
 
 .bundle-option.selected {
@@ -354,10 +348,7 @@ textarea:focus {
     transition: background-color 0.3s, transform 0.2s;
 }
 
-.pay-btn:hover:not(:disabled) {
-    background-color: #218838;
-    transform: translateY(-2px);
-}
+
 
 .pay-btn:disabled {
     background-color: #a5c3b3;
