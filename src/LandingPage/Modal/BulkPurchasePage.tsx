@@ -6,7 +6,6 @@ import {
   FaTimesCircle,
   FaTrash,
   FaChevronDown,
-  FaChevronUp,
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { autoDetectOperatorGroup } from "../../redux/Reloadly/Index";
@@ -64,16 +63,14 @@ const BulkPaymentPage: React.FC = () => {
   >([]);
   const [invalidNumbers, setInvalidNumbers] = useState<
     { id: string; number: string; error: string; isEditing: boolean }[]
-  >([
-    // Dummy for styling preview
-  ]);
+  >([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([]);
   const [allNumbersBundle, setAllNumbersBundle] =
     useState<AirtimeBundle | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSamePrice, setIsSamePrice] = useState(false);
-  const [isServiceFeeExpanded, setIsServiceFeeExpanded] = useState(false);
+  //const [isServiceFeeExpanded, setIsServiceFeeExpanded] = useState(false);
   const [customAmount, setCustomAmount] = useState<number | "">("");
   const [customAmountError, setCustomAmountError] = useState<string | null>(
     null
@@ -87,6 +84,7 @@ const BulkPaymentPage: React.FC = () => {
   const [modalServiceFee, setModalServiceFee] = useState(0);
   const [modalGrandTotal, setModalGrandTotal] = useState(0);
 
+  console.warn(modalSubtotal, modalServiceFee, modalGrandTotal);
   const updateTotalPrice = (numbers: typeof detectedNumbers) => {
     const total = numbers.reduce((sum, item) => {
       const price = item.selectedBundle
@@ -189,20 +187,14 @@ const BulkPaymentPage: React.FC = () => {
   };
 
   const calculateFees = () => {
-    const successfulCount = detectedNumbers.filter(
-      (n) => n.selectedBundle
-    ).length;
     const subtotal = totalPrice;
-    const processingFee = 499 * successfulCount;
-    const runFee = 50;
+    const processingFee = 0;
+    const runFee = 0;
     const vat = 0;
-    const totalBeforePaystack = subtotal + processingFee + runFee + vat;
+    const paystackFee = 0; // REMOVED PAYSTACK FEE
 
-    let paystackFee = 0.015 * totalBeforePaystack;
-    if (paystackFee > 2000) paystackFee = 2000;
-
-    const serviceFee = processingFee + runFee + vat + paystackFee;
-    const grandTotal = subtotal + serviceFee;
+    const serviceFee = 0;
+    const grandTotal = subtotal; // Grand total is now exactly the subtotal
 
     return { processingFee, runFee, vat, paystackFee, serviceFee, grandTotal };
   };
@@ -219,7 +211,7 @@ const BulkPaymentPage: React.FC = () => {
           ? (bundle as AirtimeBundle).price
           : isData
           ? (bundle as DataBundle).budPrice
-          : (bundle as AirtimeBundle).fixedPrice;
+          : (bundle as AirtimeBundle).price;
 
         const customId = uuidv4();
 
@@ -356,17 +348,17 @@ const BulkPaymentPage: React.FC = () => {
           Bulk Top-up
         </h2>
         <p className="text-slate-500 mb-6 font-medium">
-          Fast, reliable bulk data and airtime processing.
+          Zero fees. No gateway charges. Pay only for your airtime/data.
         </p>
 
         <div
-          className="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 text-sm font-bold p-4 rounded-r-xl mb-8 cursor-pointer  transition-all flex items-center justify-between group shadow-sm"
+          className="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 text-sm font-bold p-4 rounded-r-xl mb-8 cursor-pointer transition-all flex items-center justify-between group shadow-sm"
           onClick={() =>
             (window.location.href = "mailto:business@lukasdesignlab.com")
           }
         >
-          <span>Need more than 500 numbers? Contact our enterprise team.</span>
-          <span className="underline ">Email Admin</span>
+          <span>Need help? Contact our support team.</span>
+          <span className="underline">Support</span>
         </div>
 
         {/* Toggle Data / Airtime */}
@@ -395,7 +387,7 @@ const BulkPaymentPage: React.FC = () => {
 
         {/* Input Area */}
         <div className="mb-10 bg-white p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
-          <label className="block text-sm font-bold text-slate-600 mb-3  tracking-wider">
+          <label className="block text-sm font-bold text-slate-600 mb-3 tracking-wider">
             Phone Numbers List
           </label>
           <textarea
@@ -429,7 +421,7 @@ const BulkPaymentPage: React.FC = () => {
               <button
                 onClick={handleSubmitNumbers}
                 disabled={!bulkInput.trim() || loading}
-                className="w-full sm:w-auto px-10 py-4 bg-yellow-400 text-slate-900 font-black rounded-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all"
+                className="w-full sm:w-auto px-10 py-4 bg-yellow-400 text-slate-900 font-black rounded-2xl disabled:opacity-50 transition-all"
               >
                 DETECT NETWORKS
               </button>
@@ -449,7 +441,7 @@ const BulkPaymentPage: React.FC = () => {
         {/* Invalid Numbers */}
         {invalidNumbers.length > 0 && (
           <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-lg font-black mb-4 text-red-500  tracking-tight">
+            <h3 className="text-lg font-black mb-4 text-red-500 tracking-tight">
               Errors found
             </h3>
             <div className="grid gap-3">
@@ -469,7 +461,7 @@ const BulkPaymentPage: React.FC = () => {
                   </div>
                   <button
                     onClick={() => deleteNumber(item.id, true)}
-                    className="p-3 text-red-300  rounded-xl transition-all"
+                    className="p-3 text-red-300 rounded-xl transition-all"
                   >
                     <FaTrash />
                   </button>
@@ -484,18 +476,18 @@ const BulkPaymentPage: React.FC = () => {
           <div className="mb-10">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-black text-slate-900">
-                Detected Recipient List
+                Recipient List
               </h3>
               {!isData && (
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <span className="text-sm font-bold text-slate-500 transition-colors">
-                    Bulk Amount
+                    Apply to All
                   </span>
                   <input
                     type="checkbox"
                     checked={isSamePrice}
                     onChange={() => setIsSamePrice(!isSamePrice)}
-                    className="w-6 h-6  rounded-lg accent-yellow-400 cursor-pointer"
+                    className="w-6 h-6 rounded-lg accent-yellow-400 cursor-pointer"
                   />
                 </label>
               )}
@@ -503,7 +495,7 @@ const BulkPaymentPage: React.FC = () => {
 
             {isSamePrice && !isData && (
               <div className="mb-8 p-8 bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl animate-in zoom-in-95 duration-300">
-                <label className="block text-sm font-bold text-slate-400 mb-3  tracking-widest">
+                <label className="block text-sm font-bold text-slate-400 mb-3 tracking-widest">
                   Global Airtime Amount (₦)
                 </label>
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -512,7 +504,7 @@ const BulkPaymentPage: React.FC = () => {
                     value={customAmount}
                     onChange={handleCustomAmountChange}
                     placeholder="Enter amount (e.g. 1000)"
-                    className="flex-1 p-4 bg-slate-800 border-2 border-slate-700 rounded-2xl text-white placeholder-slate-500 focus:outline-none focus:border-yellow-400"
+                    className="flex-1 p-4 bg-slate-800 border-2 border-slate-700 rounded-2xl text-white focus:outline-none focus:border-yellow-400"
                   />
                   <button
                     onClick={() => {
@@ -527,7 +519,7 @@ const BulkPaymentPage: React.FC = () => {
                       }
                     }}
                     disabled={!!customAmountError || !customAmount}
-                    className="px-8 py-4 bg-yellow-400 text-slate-900 font-black rounded-2xl isabled:opacity-30 transition-all"
+                    className="px-8 py-4 bg-yellow-400 text-slate-900 font-black rounded-2xl transition-all"
                   >
                     APPLY ALL
                   </button>
@@ -550,7 +542,6 @@ const BulkPaymentPage: React.FC = () => {
                       : "border-slate-100 shadow-sm"
                   }`}
                 >
-                  {/* Header */}
                   <div
                     onClick={() => toggleAccordion(item.id)}
                     className="flex flex-col p-5 cursor-pointer select-none"
@@ -573,12 +564,11 @@ const BulkPaymentPage: React.FC = () => {
                           <p className="font-black text-slate-900 text-lg leading-none">
                             {item.number}
                           </p>
-                          <p className="text-xs text-slate-400 font-bold  mt-1">
+                          <p className="text-xs text-slate-400 font-bold mt-1">
                             {item.detectedNetwork.name}
                           </p>
                         </div>
                       </div>
-
                       <div className="flex items-center gap-4">
                         <button
                           onClick={(e) => {
@@ -600,10 +590,9 @@ const BulkPaymentPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
-
                     {item.selectedBundle && (
                       <div className="mt-4 flex items-center gap-2">
-                        <span className="text-xs font-black text-slate-900 bg-yellow-400 px-3 py-1.5 rounded-lg  tracking-tight shadow-sm">
+                        <span className="text-xs font-black text-slate-900 bg-yellow-400 px-3 py-1.5 rounded-lg tracking-tight shadow-sm">
                           {isData
                             ? (item.selectedBundle as DataBundle).budDataAmount
                             : `₦${(
@@ -614,7 +603,6 @@ const BulkPaymentPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Content */}
                   {expandedAccordions.includes(item.id) && (
                     <div className="px-5 pb-6 pt-2 bg-slate-50/50 animate-in slide-in-from-top-2 duration-300">
                       {isData && (
@@ -634,7 +622,6 @@ const BulkPaymentPage: React.FC = () => {
                           ))}
                         </div>
                       )}
-
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {getNetworkBundles(
                           item.detectedNetwork.name,
@@ -645,7 +632,7 @@ const BulkPaymentPage: React.FC = () => {
                             onClick={() =>
                               handleBundleSelect(item.id, bundle as any)
                             }
-                            className={`p-4 rounded-2xl text-left border-2 transition-all group/btn ${
+                            className={`p-4 rounded-2xl text-left border-2 transition-all ${
                               item.selectedBundle?.id === bundle.id
                                 ? "border-yellow-400 bg-yellow-50 shadow-inner"
                                 : "border-white bg-white hover:bg-slate-50 hover:border-slate-200"
@@ -653,7 +640,7 @@ const BulkPaymentPage: React.FC = () => {
                           >
                             {isData ? (
                               <>
-                                <div className="font-black text-slate-900 text-lg tracking-tighter">
+                                <div className="font-black text-slate-900 text-lg">
                                   {(bundle as DataBundle).budDataAmount}
                                 </div>
                                 <div className="text-xs font-bold text-slate-400">
@@ -665,13 +652,13 @@ const BulkPaymentPage: React.FC = () => {
                               </>
                             ) : (
                               <>
-                                <div className="font-black text-slate-900 text-lg tracking-tighter">
+                                <div className="font-black text-slate-900 text-lg">
                                   ₦
                                   {(
                                     bundle as AirtimeBundle
                                   ).price.toLocaleString()}
                                 </div>
-                                <div className="text-xs font-bold text-slate-400  tracking-widest">
+                                <div className="text-xs font-bold text-slate-400">
                                   Credit
                                 </div>
                               </>
@@ -690,69 +677,27 @@ const BulkPaymentPage: React.FC = () => {
         {/* Summary & Pay */}
         {(detectedNumbers.length > 0 || invalidNumbers.length > 0) && (
           <div className="bg-white p-8 rounded-[2.5rem] border-2 border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] mb-10 overflow-hidden relative">
-            <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 pointer-events-none">
-              <FaCheckCircle size={140} className="text-yellow-400" />
-            </div>
-
             <div className="space-y-5 relative z-10">
               <div className="flex justify-between items-end">
-                <span className="text-slate-400 font-bold  tracking-widest text-xs">
+                <span className="text-slate-400 font-bold tracking-widest text-xs">
                   Bundle Total
                 </span>
-                <span className="text-slate-900 font-black text-2xl tracking-tighter">
+                <span className="text-slate-900 font-black text-2xl">
                   ₦{totalPrice.toLocaleString()}
                 </span>
               </div>
 
-              <div
-                onClick={() => setIsServiceFeeExpanded(!isServiceFeeExpanded)}
-                className={`flex justify-between items-center cursor-pointer py-4 px-6 rounded-2xl transition-all border-2 ${
-                  isServiceFeeExpanded
-                    ? "bg-slate-900 text-white border-slate-900"
-                    : "bg-slate-50 text-slate-600 border-slate-50 "
-                }`}
-              >
-                <span className="font-bold">Service Fees</span>
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`font-black ${
-                      isServiceFeeExpanded
-                        ? "text-yellow-400"
-                        : "text-slate-900"
-                    }`}
-                  >
-                    ₦{fees.serviceFee.toLocaleString()}
-                  </span>
-                  <span className="opacity-50">
-                    {isServiceFeeExpanded ? <FaChevronUp /> : <FaChevronDown />}
-                  </span>
-                </div>
+              <div className="flex justify-between items-center py-4 px-6 rounded-2xl bg-green-50 text-green-700 border-2 border-green-100">
+                <span className="font-bold">Service Charges</span>
+                <span className="font-black">FREE</span>
               </div>
-
-              {isServiceFeeExpanded && (
-                <div className="px-6 py-2 space-y-3 animate-in fade-in slide-in-from-top-4 duration-300">
-                  <div className="flex justify-between text-sm font-bold text-slate-500">
-                    <span>Gateways & Processing</span>
-                    <span className="text-slate-900">
-                      ₦
-                      {(fees.processingFee + fees.paystackFee).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm font-bold text-slate-500">
-                    <span>System Maintenance</span>
-                    <span className="text-slate-900">
-                      ₦{fees.runFee.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              )}
 
               <div className="pt-6 border-t-2 border-slate-100 flex justify-between items-center">
                 <span className="text-slate-900 font-black text-xl">
                   Total Due
                 </span>
                 <span className="text-yellow-500 font-black text-4xl tracking-tight">
-                  ₦{fees.grandTotal.toLocaleString()}
+                  ₦{totalPrice.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -760,7 +705,7 @@ const BulkPaymentPage: React.FC = () => {
             <button
               onClick={handlePay}
               disabled={!allBundlesSelected || loading}
-              className="w-full mt-10 py-5 bg-yellow-400 text-slate-900 font-black text-xl rounded-2xl active:translate-y-0 disabled:opacity-30 disabled:transform-none transition-all shadow-xl shadow-yellow-200"
+              className="w-full mt-10 py-5 bg-yellow-400 text-slate-900 font-black text-xl rounded-2xl active:translate-y-0 disabled:opacity-30 transition-all shadow-xl shadow-yellow-200"
             >
               PROCEED TO SECURE PAYMENT
             </button>
@@ -772,10 +717,10 @@ const BulkPaymentPage: React.FC = () => {
             isOpen={isSummaryModalOpen}
             onClose={() => setIsSummaryModalOpen(false)}
             purchaseList={modalPurchaseList}
-            subtotal={modalSubtotal}
-            serviceFee={modalServiceFee}
-            grandTotal={modalGrandTotal}
-            totalPrice={modalGrandTotal}
+            subtotal={totalPrice}
+            serviceFee={0}
+            grandTotal={totalPrice}
+            totalPrice={totalPrice}
           />
         )}
       </div>
