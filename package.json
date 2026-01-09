@@ -20,6 +20,8 @@
     "formik": "^2.4.5",
     "html2canvas": "^1.4.1",
     "i18next": "^25.0.0",
+    "jspdf": "^4.0.0",
+    "jspdf-autotable": "^5.0.7",
     "leaflet": "^1.9.4",
     "papaparse": "^5.5.3",
     "react": "^18.3.1",
