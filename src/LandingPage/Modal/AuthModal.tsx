@@ -7,6 +7,7 @@ import {
   resendOtp,
 } from "../../redux/Auth/authSlice";
 import "./AuthModal.css";
+import { AppDispatch } from "../../redux/store";
 
 type AuthView = "login" | "register" | "otpVerification";
 
@@ -21,29 +22,25 @@ const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   initialView = "login",
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  // Form states
   const [currentView, setCurrentView] = useState<AuthView>(initialView);
   const [name, setName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [submittedEmail, setSubmittedEmail] = useState("");
   const [otp, setOtp] = useState("");
 
-  // Feedback & token
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
       resetAllFields();
     }
   }, [isOpen]);
 
-  // Close modal on successful authentication
   useEffect(() => {
     if (token) {
       onClose();
@@ -68,18 +65,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setError(null);
 
     try {
-      const resultAction: any = await dispatch(
-        registerUser({ name, email: formEmail }) as any
+      const resultAction = await dispatch(
+        registerUser({ name, email: formEmail })
       );
       if (registerUser.fulfilled.match(resultAction)) {
         setSubmittedEmail(formEmail);
         setMessage(
-          resultAction.payload.message ||
+          resultAction.payload?.message ||
             "Registration successful. Please verify your email."
         );
         setCurrentView("otpVerification");
       } else {
-        setError(resultAction.payload || "Registration failed.");
+        setError("Registration failed.");
       }
     } catch (err: any) {
       setError(err.message || "Unexpected error during registration.");
@@ -95,13 +92,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setError(null);
 
     try {
-      const resultAction: any = await dispatch(loginUser(formEmail) as any);
+      const resultAction = await dispatch(loginUser(formEmail));
       if (loginUser.fulfilled.match(resultAction)) {
         setSubmittedEmail(formEmail);
-        setMessage(resultAction.payload.message || "OTP sent to your email.");
+        setMessage(resultAction.payload?.message || "OTP sent to your email.");
         setCurrentView("otpVerification");
       } else {
-        setError(resultAction.payload || "Login failed.");
+        setError("Login failed.");
       }
     } catch (err: any) {
       setError(err.message || "Unexpected error during login.");
@@ -117,25 +114,23 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setError(null);
 
     try {
-      const resultAction: any = await dispatch(
-        verifyOtp({ email: submittedEmail, otp }) as any
+      const resultAction = await dispatch(
+        verifyOtp({ email: submittedEmail, otp })
       );
-
       if (verifyOtp.fulfilled.match(resultAction)) {
-        const token = resultAction.payload.token;
-        const userId = resultAction.payload.userId;
-        setMessage(resultAction.payload.message || "OTP verified!");
+        const { token: receivedToken, userId, email } = resultAction.payload;
+        setMessage(
+          resultAction.payload?.message || "OTP verified successfully!"
+        );
 
-        if (token) {
-          // save token in localStorage as bulkup_data_token
-          localStorage.setItem("bulkup_data_token", token);
+        if (receivedToken) {
+          localStorage.setItem("bulkup_data_token", receivedToken);
           localStorage.setItem("bulkup_data_userId", userId);
-          //bulkup_data_userId
-          // still update state if you need to trigger useEffect/onClose
-          setToken(token);
+          localStorage.setItem("bulkup_data_email", email);
+          setToken(receivedToken);
         }
       } else {
-        setError(resultAction.payload || "OTP verification failed.");
+        setError("Invalid or expired OTP.");
       }
     } catch (err: any) {
       setError(err.message || "Unexpected error during OTP verification.");
@@ -155,13 +150,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setError(null);
 
     try {
-      const resultAction: any = await dispatch(
-        resendOtp(submittedEmail) as any
-      );
+      const resultAction = await dispatch(resendOtp(submittedEmail));
       if (resendOtp.fulfilled.match(resultAction)) {
-        setMessage(resultAction.payload.message || "New OTP sent.");
+        setMessage(resultAction.payload?.message || "New OTP sent.");
       } else {
-        setError(resultAction.payload || "Failed to resend OTP.");
+        setError("Failed to resend OTP.");
       }
     } catch (err: any) {
       setError(err.message || "Unexpected error during OTP resend.");
@@ -176,10 +169,9 @@ const AuthModal: React.FC<AuthModalProps> = ({
     <div className="auth-modal-overlay">
       <div className="auth-modal-content">
         <button className="auth-modal-close-btn" onClick={onClose}>
-          &times;
+          ×
         </button>
 
-        {/* Section Heading */}
         {currentView === "login" && (
           <>
             <h2 className="auth-modal-title">Login</h2>
@@ -204,18 +196,17 @@ const AuthModal: React.FC<AuthModalProps> = ({
           <>
             <h2 className="auth-modal-title">Verify OTP</h2>
             <p className="auth-description">
-              A verification code was sent to <strong>{submittedEmail}</strong>.
-              Please enter it below to continue.
+              A verification code was sent to{" "}
+              <strong>{submittedEmail || "your email"}</strong>. Please enter it
+              below to continue.
             </p>
           </>
         )}
 
-        {/* Feedback Messages */}
         {loading && <p className="auth-message loading-message">Loading...</p>}
         {message && <p className="auth-message success-message">{message}</p>}
         {error && <p className="auth-message error-message">{error}</p>}
 
-        {/* Forms */}
         {currentView === "register" && (
           <form onSubmit={handleRegister} className="auth-form">
             <input
@@ -230,7 +221,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               type="email"
               placeholder="Email"
               value={formEmail}
-              onChange={(e) => setFormEmail(e.target.value)}
+              onChange={(e) => setFormEmail(e.target.value.trim())}
               required
               className="auth-input"
             />
@@ -259,7 +250,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               type="email"
               placeholder="Email"
               value={formEmail}
-              onChange={(e) => setFormEmail(e.target.value)}
+              onChange={(e) => setFormEmail(e.target.value.trim())}
               required
               className="auth-input"
             />
@@ -288,7 +279,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
               type="text"
               placeholder="Enter OTP"
               value={otp}
-              onChange={(e) => setOtp(e.target.value)}
+              onChange={(e) => setOtp(e.target.value.trim())}
               required
               className="auth-input"
             />

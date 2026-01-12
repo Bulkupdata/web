@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { FaTimes } from "react-icons/fa";
-
 import "./BulkSummaryPage.css";
 import AuthModal from "./AuthModal";
 import { BaseUrl, WebBaseUrl } from "../../redux/baseurl";
@@ -36,7 +35,7 @@ interface BulkSummaryPageProps {
   subtotal: number;
   serviceFee: number;
   grandTotal: number;
-  totalPrice: number; // This is the same as grandTotal
+  totalPrice: number; // consider removing if unused
 }
 
 const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
@@ -46,20 +45,50 @@ const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
   subtotal,
   serviceFee,
   grandTotal,
-  totalPrice,
 }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("bulkup_data_token");
 
+  // Auto-show auth modal when summary opens and there's no email yet
+  useEffect(() => {
+    if (!isOpen) return;
+  
+    const checkEmail = () => {
+      const email = localStorage.getItem("bulkup_data_email");
+      if (!email) {
+        setIsAuthModalOpen(true);
+      }
+    };
+  
+    checkEmail();
+  
+    // Optional: listen for storage changes (if login happens in another tab/window)
+    window.addEventListener("storage", checkEmail);
+    return () => window.removeEventListener("storage", checkEmail);
+  }, [isOpen]);
+
   const handleProceedToPay = async () => {
-    if (!token) {
+    // Always read fresh from localStorage on every click
+    const userEmail = localStorage.getItem("bulkup_data_email");
+
+    if (!userEmail) {
       setIsAuthModalOpen(true);
       return;
     }
 
-    if (purchaseList.length === 0) return;
+    // Optional: also re-check token here if you want to be extra safe
+    const currentToken = localStorage.getItem("bulkup_data_token");
+    if (!currentToken) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    if (purchaseList.length === 0) {
+      alert("No items selected for purchase.");
+      return;
+    }
 
     setLoading(true);
 
@@ -90,7 +119,8 @@ const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
           planType: item.bundle?.planType ?? item.planType ?? item.type,
           useLocalAmount: true,
           customIdentifier: itemId,
-          recipientEmail: "bulkupdata@gmail.com",
+          recipientEmail: null, // ← most common for airtime/data
+          // recipientEmail: userEmail,   // ← only if backend really needs buyer email here
           recipientPhone: item.recipientPhone,
           senderPhone: item.senderPhone || {
             countryCode: "NG",
@@ -104,34 +134,53 @@ const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
         };
       });
 
-      console.log("✅ Generated Topup Payloads:", totalPrice, topupPayloads);
+      console.log("Generated top-up payloads:", topupPayloads);
+
       localStorage.setItem("topupPayloads", JSON.stringify(topupPayloads));
 
       const response = await axios.post(
         `${BaseUrl}/api/reloadly/create-paystack-payment`,
         {
-          email: "bulkupdata@gmail.com",
-          amount: Math.round(grandTotal),
+          email: userEmail, // fresh value sent to Paystack
+          amount: Math.round(grandTotal), // Paystack → kobo
           callback_url: `${WebBaseUrl}/payment-success`,
           currency: "NGN",
         },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${currentToken}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
       const { checkout_url } = response.data;
+
+      if (!checkout_url) {
+        throw new Error("No payment URL received from server");
+      }
+
       window.location.href = checkout_url;
-    } catch (error) {
-      console.error("❌ Payment initiation failed:", error);
-      alert("Payment initiation failed. Please try again.");
+    } catch (error: any) {
+      console.error("Payment initiation failed:", error);
+
+      let msg = "Failed to start payment. Please try again.";
+
+      if (error.response?.data?.message) {
+        msg = error.response.data.message;
+      } else if (error.message) {
+        msg = error.message;
+      }
+
+      alert(msg);
+    } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen) return null;
+
+  const isLoggedIn = !!token && !!localStorage.getItem("bulkup_data_email");
 
   return (
     <div className="modal-overlay">
@@ -139,12 +188,9 @@ const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
         <button className="modal-close-btn" onClick={onClose}>
           <FaTimes />
         </button>
-        <br />
-        <h2 className="" style={{ marginTop: 16 }}>
-          Purchase Summary
-        </h2>
 
-        {/* Summary Table */}
+        <h2 style={{ marginTop: 16 }}>Purchase Summary</h2>
+
         {purchaseList.length === 0 ? (
           <div className="no-items-message">
             <p>No items to summarize.</p>
@@ -153,101 +199,100 @@ const BulkSummaryPage: React.FC<BulkSummaryPageProps> = ({
             </button>
           </div>
         ) : (
-          <div className="bulk-summary-table-wrapper">
-            <table className="bulk-summary-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Phone Number</th>
-                  <th>Type</th>
-                  <th>Bundle</th>
-                  <th>Amount (₦)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {purchaseList.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.recipientPhone.number}</td>
-                    <td>{item.type}</td>
-                    <td>
-                      {item.type === "Data"
-                        ? item.bundle?.budDataAmount ||
-                          item.bundle?.retailDataAmount ||
-                          "-"
-                        : "Airtime"}
-                    </td>
-                    <td>
-                      {(
-                        item.bundle?.retailPrice ??
-                        item.bundle?.price ??
-                        item.bundle?.fixedPrice ??
-                        item.amount ??
-                        0
-                      ).toLocaleString()}
-                    </td>
+          <>
+            <div className="bulk-summary-table-wrapper">
+              <table className="bulk-summary-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Phone Number</th>
+                    <th>Type</th>
+                    <th>Bundle</th>
+                    <th>Amount (₦)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                </thead>
+                <tbody>
+                  {purchaseList.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.recipientPhone.number}</td>
+                      <td>{item.type}</td>
+                      <td>
+                        {item.type === "Data"
+                          ? item.bundle?.budDataAmount ||
+                            item.bundle?.retailDataAmount ||
+                            "–"
+                          : "Airtime"}
+                      </td>
+                      <td>
+                        {(
+                          item.bundle?.retailPrice ??
+                          item.bundle?.price ??
+                          item.bundle?.fixedPrice ??
+                          item.amount ??
+                          0
+                        ).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-        {/* Payment Section */}
-        <div className="bulk-summary-payment-summary">
-          <div className="bulk-summary-price-breakdown">
-            <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
-              Subtotal:
-              <span
-                style={{
-                  fontSize: 15,
-                  color: "#666",
-                  fontWeight: 700,
-                  marginLeft: 12,
-                }}
+            <div className="bulk-summary-payment-summary">
+              <div className="bulk-summary-price-breakdown">
+                <p style={{ fontSize: 14, color: "#555" }}>
+                  Subtotal: <strong>₦{subtotal?.toLocaleString()}</strong>
+                </p>
+                <p style={{ fontSize: 14, color: "#555" }}>
+                  Service Fee: <strong>₦{serviceFee?.toLocaleString()}</strong>
+                </p>
+                <p
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    marginTop: "1rem",
+                  }}
+                >
+                  Grand Total: ₦{grandTotal?.toLocaleString()}
+                </p>
+              </div>
+
+              <br />
+
+              {!isLoggedIn && (
+                <p
+                  style={{
+                    color: "#d32f2f",
+                    fontSize: "0.95rem",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  Please log in or create an account to proceed with payment
+                </p>
+              )}
+
+              <button
+                className="bulk-summary-pay-btn"
+                onClick={handleProceedToPay}
+                disabled={loading || purchaseList.length === 0 || !isLoggedIn}
               >
-                ₦{subtotal?.toLocaleString()}
-              </span>
-            </p>
-            <p style={{ fontSize: 10, color: "#666", fontWeight: 400 }}>
-              Service Fee:
-              <span
-                style={{
-                  fontSize: 15,
-                  color: "#666",
-                  fontWeight: 700,
-                  marginLeft: 12,
-                }}
-              >
-                ₦{serviceFee?.toLocaleString()}
-              </span>
-            </p>
-            <p style={{ fontWeight: 700, fontSize: 24, marginTop: "1rem" }}>
-              <span style={{ fontWeight: 500, fontSize: 13 }}>
-                Grand Total:
-              </span>{" "}
-              ₦{grandTotal?.toLocaleString()}
-            </p>
-          </div>
-          <br />
-          <button
-            className="bulk-summary-pay-btn"
-            onClick={handleProceedToPay}
-            disabled={loading || purchaseList.length === 0}
-          >
-            {loading ? (
-              <span className="loader"></span>
-            ) : token ? (
-              "Pay Now"
-            ) : (
-              "Proceed to Pay"
-            )}
-          </button>
-        </div>
+                {loading ? (
+                  <span className="loader" />
+                ) : !isLoggedIn ? (
+                  "Login to Pay"
+                ) : (
+                  "Pay Now"
+                )}
+              </button>
+            </div>
+          </>
+        )}
 
         <AuthModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
+          initialView="login"
         />
       </div>
     </div>
